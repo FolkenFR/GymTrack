@@ -13,7 +13,7 @@ Ouvrir l'URL GitHub Pages du dépôt (ou `index.html` via un petit serveur local
 - **Progression** — un graphique par exercice : charge maximale (hors échauffement) par séance.
 - **Cardio** — saisie et liste des séances de tapis, plus le gainage.
 - **Profil** — fiche (taille, date de naissance, FC max estimée avec un bouton « 220 − âge », objectif libre), journal du poids de corps (date, poids prérempli avec la dernière pesée, note ; liste et graphique SVG dans le temps) et tuiles calculées : IMC (taille + dernière pesée ; vide tant que la taille n'est pas renseignée), poids réellement tiré en traction (poids − contrepoids courant, c'est-à-dire la dernière série hors échauffement de « Traction assistée »), ratio chest press / poids de corps (charge max de la dernière séance de chest press) et zones cardiaques dérivées de la FC max (échauffement < 60 %, base 65–75 %, intervalles 80–88 %).
-- **Données** — export JSON, import JSON (remplacement ou fusion), retour au seed, choix du thème (**Moderne** par défaut, ou **Rétro 16 bits** : palette console, fontes pixel Silkscreen / Pixelify Sans, timer de repos en barre de PV ; mémorisé sur l'appareil, détails dans `DESIGN.md`), rappel des règles de progression.
+- **Données** — export JSON, import JSON (remplacement ou fusion), retour au seed, choix du thème (**Moderne** par défaut, **16 bits** : palette console, fontes pixel Silkscreen / Pixelify Sans, timer de repos en barre de PV, ou **8 bits** : noir et blanc NES, une seule fonte Press Start 2P, barre de PV en 8 blocs, histogrammes en blocs ; mémorisé sur l'appareil, détails dans `DESIGN.md`), rappel des règles de progression.
 
 ### Charges
 
@@ -85,7 +85,7 @@ Tous les chemins sont relatifs : le site fonctionne aussi bien à la racine d'un
 ```
 index.html            structure des six écrans
 app.js                logique (stockage, rendu, timer, graphiques SVG)
-styles.css            thème sombre, mobile-first, + thème rétro 16 bits (identité visuelle : voir DESIGN.md)
+styles.css            thème sombre, mobile-first, + thèmes 16 bits et 8 bits (identité visuelle : voir DESIGN.md)
 sw.js                 service worker (cache hors ligne)
 manifest.webmanifest  manifeste PWA
 icons/                icônes

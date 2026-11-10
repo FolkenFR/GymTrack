@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <script>
     // Thème choisi dans l'onglet Données, appliqué avant le premier rendu pour éviter un flash.
-    try { if (localStorage.getItem('gymtrack:theme') === 'retro') document.documentElement.setAttribute('data-theme', 'retro'); } catch (e) { /* ignore */ }
+    try { var t = localStorage.getItem('gymtrack:theme'); if (t === 'retro' || t === 'nes') document.documentElement.setAttribute('data-theme', t); } catch (e) { /* ignore */ }
   </script>
 </head>
 <body>
@@ -180,10 +180,11 @@
       </div>
       <div class="card">
         <h2>Thème</h2>
-        <p class="muted small">Moderne (affiche de salle) ou rétro 16 bits (console de salon). Le choix est mémorisé sur cet appareil.</p>
+        <p class="muted small">Moderne (affiche de salle), 16 bits (console de salon) ou 8 bits (NES). Le choix est mémorisé sur cet appareil.</p>
         <div class="segmented theme-select" id="theme-select" role="group" aria-label="Thème">
           <button type="button" data-theme-choice="modern" class="active">Moderne</button>
-          <button type="button" data-theme-choice="retro">Rétro 16 bits</button>
+          <button type="button" data-theme-choice="retro">16 bits</button>
+          <button type="button" data-theme-choice="nes">8 bits</button>
         </div>
       </div>
       <div class="card">

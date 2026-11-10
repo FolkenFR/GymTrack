@@ -112,7 +112,7 @@ droite.
 
 ## Thème rétro 16 bits (optionnel)
 
-Second thème, choisi dans l'onglet Données (« Thème : Moderne / Rétro 16 bits »), mémorisé dans
+Second thème, choisi dans l'onglet Données (« Thème : Moderne / 16 bits / 8 bits »), mémorisé dans
 `localStorage` (`gymtrack:theme`) et posé en `data-theme="retro"` sur `<html>` par un script inline
 dans `<head>`, avant le premier rendu. Tout tient dans `styles.css` sous `html[data-theme="retro"]` :
 surcharge des jetons, puis règles propres au thème. Le thème par défaut ne change pas.
@@ -179,3 +179,90 @@ Tous les couples texte/fond utilisés passent 4,5:1 (le plus serré : bleu pâle
 - `image-rendering: pixelated` n'est appliqué qu'aux images ; les GIF de démonstration (photos
   320 px) ne sont pas modifiés.
 - Pas de son 8 bits : le bip Web Audio existant reste le même dans les deux thèmes.
+
+## Thème 8 bits (optionnel)
+
+Troisième thème, « 8 bits » dans le sélecteur de l'onglet Données (Moderne / 16 bits / 8 bits),
+mémorisé dans `localStorage` (`gymtrack:theme` = `nes`) et posé en `data-theme="nes"` sur `<html>`
+avant le premier rendu. Tout tient dans `styles.css` sous `html[data-theme="nes"]`. Les deux autres
+thèmes ne changent pas (captures comparées pixel à pixel avant/après, seul l'onglet Données diffère).
+
+Référence : NES / Game Boy, pas la Super Nintendo. Là où le 16 bits est une boîte de dialogue de RPG
+avec biseaux et dégradés de bleu, le 8 bits est un écran noir, un filet blanc, une seule fonte et six
+couleurs. Les rôles sémantiques sont conservés : jaune = maintenant, vert = fait, rouge = danger.
+
+### Mécanique partagée (app.js)
+
+`isRetro()` est remplacé par `theme()` (`'modern' | 'retro' | 'nes'`) et `isPixel()` (vrai pour les deux
+thèmes pixel). `THEME_SPEC` porte ce qui diffère par thème : couleur de `theme-color`, libellés
+(`LEVEL UP`, `EXP`, `READY!` / `GO!`, `NEW RECORD`), découpage de la barre de PV (un segment par 5 s en
+16 bits, 8 blocs en 8 bits). `renderHpBar`, `labels()` et `applyTheme` lisent cette table ; le 8 bits n'a
+donc dupliqué aucune logique. Les règles CSS structurelles communes aux deux thèmes pixel (icônes pixel,
+grille du panneau de repos, compteur `TIME`) sont écrites avec les deux sélecteurs.
+
+### Palette
+
+| Nom | Hex | Rôle (jeton remplacé) |
+|---|---|---|
+| Noir | `#000000` | Fond et panneaux (`--encre`, `--ardoise`) : pas de surface, les boîtes sont des filets. |
+| Blanc NES | `#fcfcfc` | Texte, bordures, icônes, curseur (`--craie`, `--filet`). |
+| Gris | `#7c7c7c` | Texte secondaire, séries à venir, blocs de PV vides (`--gris`, 5,0:1 sur noir). |
+| Jaune | `#f8b800` | **Maintenant** : charge cible, série active, compte à rebours, validation, titres de section, `LEVEL UP`, `EXP`, `NEW RECORD`, barre max des graphiques (`--braise`, `--gold`). |
+| Vert clair | `#b8f818` | **Fait** : séries enregistrées, charge max, chiffre du repos à zéro (`--cyan`). |
+| Bleu NES | `#0000fc` | Aplats seulement : blocs des histogrammes. Jamais en texte (1,9:1 sur noir). |
+| Bleu clair | `#3cbcfc` | Texte bleu : type de séance dans l'historique, valeurs des graphiques, `code`, focus (`--sky`). |
+| Rouge | `#f83800` | Danger : suppression, retour au seed (`--rose`, 5,3:1 sur noir). Le jaune porte « maintenant », le rouge ne porte donc que le danger ; le magenta de secours n'a pas été nécessaire. |
+
+Six couleurs au plus par écran (noir, blanc, gris, jaune, vert, bleu clair ; le rouge n'apparaît que sur
+Données). Tous les couples texte/fond passent 4,5:1 (le plus serré : gris sur noir, 5,0:1).
+
+### Typographie
+
+- **Press Start 2P 400** (OFL, `assets/fonts/press-start-2p-latin-400-normal.woff2`, 12 Ko, via
+  `@fontsource/press-start-2p`) : **une seule fonte partout**, corps compris. Corps 12 px, interligne 1,8 ;
+  charge cible 28 px ; compte à rebours 64 px (80 px à partir de 600 px) ; titres 16–18 px ; étiquettes
+  de champs 9 px ; libellé d'onglet 7 px ; graduations 7 px.
+- Accents vérifiés : é, è, ê, ç, à, ù, É, À sont dans le sous-ensemble latin (220 glyphes), aucun repli
+  sur Silkscreen n'a été nécessaire pour le corps. Seuls `−` (U+2212), `→`, `←` et `▶` manquent : le
+  signe moins tombe sur la fonte système, et les curseurs `▶` sont dessinés en CSS (triangle en bordures),
+  pas en glyphe.
+- **Capitales accentuées** : dans une grille 8 × 8, Press Start 2P dessine É, È, À… avec la forme des
+  minuscules accentuées. `text-transform: uppercase` donnerait donc « POUSSéE » ou « SéANCE ». Testé aussi
+  en tirant les capitales accentuées de Silkscreen par `unicode-range` : pas mieux. Les titres, étiquettes
+  et boutons restent donc en casse normale (« Poussée », « + série », « Passer ») et seules les chaînes
+  sans accent par construction sont en capitales : `GYMTRACK`, `TIME`, `LEVEL UP`, `EXP`, `NEW RECORD`,
+  `GO!`. C'est l'écart assumé par rapport au brief « titres en capitales ».
+
+### Chrome
+
+- Boîtes de dialogue (`.card`, tuiles, démo ouverte, toast) : bordure blanche de 4 px, 2 px de vide, filet
+  intérieur de 2 px (`box-shadow` inset en deux couches), aucun rayon, aucun biseau, aucun dégradé. Les
+  champs ont un filet de 2 px, les boutons de 3 px.
+- Boutons : blanc sur noir, **inversés à l'appui** (noir sur blanc). Le bouton principal est jaune plein, le
+  bouton danger rouge sur noir.
+- Curseur `▶` clignotant (1 Hz, deux pas, `steps(2)`) à gauche de l'onglet actif et de la première série à
+  faire ; coupé par `prefers-reduced-motion`.
+- Onglets : les icônes pixel du 16 bits (`.icon-retro`) en blanc uni, **icônes seules** ; le libellé en 7 px
+  n'apparaît que sous l'onglet actif (il peut déborder sur les onglets voisins, mais jamais hors de l'écran :
+  premier et dernier libellés calés sur les bords). Les `aria-label` restent sur chaque bouton ; cibles
+  64 × 65 px.
+- Repos : chiffres 64 px jaunes et barre de PV de **8 blocs carrés** de 24 px (un par huitième de la durée),
+  séparés, qui passent gris en se vidant. À zéro : chiffre vert, `GO!` en 22 px qui cycle jaune → blanc →
+  vert en trois pas (`steps(1)`, statique en `prefers-reduced-motion`), « C'est reparti ! » inchangé.
+- Historique : `LEVEL UP` et `EXP` sur fond jaune comme en 16 bits ; `NEW RECORD` (blanc, clignotant) sur
+  la séance dont le volume est le maximum de tout l'historique (pas seulement du filtre affiché). Pas de
+  « STAGE 1-1 ».
+- Graphiques : pas de courbe. `svgBlockChart` dessine un histogramme en **blocs** bleu NES, un bloc par
+  5 kg (2,5 kg quand l'amplitude ≤ 15 kg, poids de corps compris), barre(s) au maximum en jaune, valeurs
+  en bleu clair, socle blanc. La version courbe/escalier n'est pas générée dans ce thème : le changement de
+  thème re-rend l'écran.
+- Toast : boîte de dialogue avec une « pièce » jaune de deux images (large / étroite, `steps(1)`) à gauche
+  du message. Pas de son.
+- Service worker : `gymtrack-v8`, fonte ajoutée au shell. Le manifeste garde la couleur du thème par défaut ;
+  `theme-color` passe à `#000000` via JS.
+
+### Non retenu
+
+- Capitales forcées sur les titres (voir Typographie).
+- Balayage CRT : propre au 16 bits, le 8 bits reste en noir pur.
+- Son 8 bits : le bip Web Audio reste le même dans les trois thèmes.

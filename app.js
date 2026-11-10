@@ -228,23 +228,33 @@
     return ordered.concat([...names].sort((a, b) => a.localeCompare(b, 'fr')));
   }
 
-  // ---------- Thème (moderne / rétro 16 bits) ----------
-  // L'attribut est posé avant le premier rendu par le script inline de index.html.
-  const isRetro = () => document.documentElement.getAttribute('data-theme') === 'retro';
+  // ---------- Thème (moderne / rétro 16 bits / 8 bits) ----------
+  // L'attribut data-theme est posé avant le premier rendu par le script inline de index.html.
+  // 'modern' n'a pas d'attribut ; 'retro' (16 bits) et 'nes' (8 bits) partagent les comportements
+  // « pixel » (barre de PV, LEVEL UP / EXP, icônes pixel) et se distinguent par THEME_SPEC.
+  const THEME_SPEC = {
+    modern: { attr: null, color: '#141a2b', progress: 'Progression', volume: 'volume', ready: 'READY!', record: null },
+    retro: { attr: 'retro', color: '#0f0f23', progress: 'LEVEL UP', volume: 'EXP', ready: 'READY!', record: null, hpSeconds: 5 },
+    nes: { attr: 'nes', color: '#000000', progress: 'LEVEL UP', volume: 'EXP', ready: 'GO!', record: 'NEW RECORD', hpSegments: 8 },
+  };
+  /** Nom du thème courant : 'modern' | 'retro' | 'nes'. */
+  const theme = () => { const t = document.documentElement.getAttribute('data-theme'); return THEME_SPEC[t] ? t : 'modern'; };
+  /** Vrai pour les thèmes à pixels (16 et 8 bits) : barre de PV, graphiques sans courbe, libellés ludiques. */
+  const isPixel = () => theme() !== 'modern';
   function applyTheme(name, { rerender = true } = {}) {
-    const retro = name === 'retro';
-    if (retro) document.documentElement.setAttribute('data-theme', 'retro');
+    const spec = THEME_SPEC[name] ? THEME_SPEC[name] : THEME_SPEC.modern;
+    if (spec.attr) document.documentElement.setAttribute('data-theme', spec.attr);
     else document.documentElement.removeAttribute('data-theme');
-    try { retro ? localStorage.setItem(THEME_KEY, 'retro') : localStorage.removeItem(THEME_KEY); } catch (_) { /* ignore */ }
+    try { spec.attr ? localStorage.setItem(THEME_KEY, spec.attr) : localStorage.removeItem(THEME_KEY); } catch (_) { /* ignore */ }
     const meta = $('meta[name=theme-color]');
-    if (meta) meta.content = retro ? '#0f0f23' : '#141a2b';
-    $$('#theme-select button').forEach((b) => b.classList.toggle('active', (b.dataset.themeChoice === 'retro') === retro));
+    if (meta) meta.content = spec.color;
+    $$('#theme-select button').forEach((b) => b.classList.toggle('active', (THEME_SPEC[b.dataset.themeChoice] || THEME_SPEC.modern) === spec));
+    const ready = $('.rest-ready');
+    if (ready) ready.textContent = spec.ready;
     if (rerender) { renderHpBar(); const cur = $$('.screen').find((sc) => !sc.hidden); if (cur) render[cur.dataset.screen]?.(); }
   }
-  /** Libellés ludiques du thème rétro (le reste du texte ne change pas). */
-  const labels = () => (isRetro()
-    ? { progress: 'LEVEL UP', volume: 'EXP' }
-    : { progress: 'Progression', volume: 'volume' });
+  /** Libellés ludiques des thèmes pixel (le reste du texte ne change pas). */
+  const labels = () => THEME_SPEC[theme()];
 
   // ---------- Navigation ----------
   function showScreen(name) {
@@ -429,13 +439,14 @@
       setTimeout(() => { if (rest.fired) stopRest(); }, 6000);
     }
   }
-  /** Thème rétro : barre de PV, un segment par tranche de 5 s, qui se vide. */
+  /** Thèmes pixel : barre de PV qui se vide. 16 bits : un segment par tranche de 5 s ; 8 bits : 8 blocs. */
   function renderHpBar(remaining = Math.max(0, Math.ceil((rest.endAt - Date.now()) / 1000))) {
     const bar = $('#rest-hp');
-    if (!bar || !isRetro() || !rest.endAt) return;
-    const total = Math.max(1, Math.ceil(rest.total / 5));
+    if (!bar || !isPixel() || !rest.endAt) return;
+    const spec = labels();
+    const total = Math.max(1, spec.hpSegments || Math.ceil(rest.total / (spec.hpSeconds || 5)));
     if (bar.childElementCount !== total) bar.innerHTML = '<span></span>'.repeat(total);
-    const on = Math.ceil(remaining / 5);
+    const on = Math.ceil((remaining * total) / Math.max(1, rest.total));
     Array.from(bar.children).forEach((seg, i) => seg.classList.toggle('off', i >= on));
   }
   function stopRest() {
@@ -588,6 +599,11 @@
     const root = $('#history-sessions');
     if (!sessions.length) { root.innerHTML = '<p class="empty">Aucune séance</p>'; return; }
 
+    const sessionVolume = (s) => s.sets.filter((e) => !e.chauffe).reduce((sum, e) => sum + (Number(e.reps) || 0) * (Number(e.charge_kg) || 0), 0);
+    // Thème 8 bits : NEW RECORD sur la séance au volume le plus élevé de tout l'historique (pas seulement du filtre).
+    const recordVolume = L.record ? Math.max(0, ...[...new Set(data.muscu.map((e) => `${e.date}|${e.seance || ''}`))]
+      .map((k) => sessionVolume({ sets: data.muscu.filter((e) => `${e.date}|${e.seance || ''}` === k) }))) : 0;
+
     root.innerHTML = sessions.map((s) => {
       const key = `${s.date}|${s.seance}`;
       // Exercices dans l'ordre de première apparition (ordre de la séance), séries par numéro.
@@ -597,8 +613,8 @@
         if (!byEx.has(n)) byEx.set(n, []);
         byEx.get(n).push(e);
       }
-      const work = s.sets.filter((e) => !e.chauffe);
-      const volume = work.reduce((sum, e) => sum + (Number(e.reps) || 0) * (Number(e.charge_kg) || 0), 0);
+      const volume = sessionVolume(s);
+      const record = L.record && volume > 0 && volume === recordVolume ? `<span class="badge-record">${L.record}</span>` : '';
       let progressions = 0;
 
       const exHtml = [...byEx.entries()].map(([name, sets]) => {
@@ -625,7 +641,7 @@
       return `<details class="card session-card" data-key="${esc(key)}"${historyState.open.has(key) ? ' open' : ''}>
         <summary>
           <div class="session-sum">
-            <div class="session-sum-head"><span class="session-date">${fmtDate(s.date)}</span><span class="session-type">${esc(s.seance) || 'Séance'}</span>${progressions ? `<span class="badge-progress">${progressions} ↑</span>` : ''}</div>
+            <div class="session-sum-head"><span class="session-date">${fmtDate(s.date)}</span><span class="session-type">${esc(s.seance) || 'Séance'}</span>${progressions ? `<span class="badge-progress">${progressions} ↑</span>` : ''}${record}</div>
             <div class="session-sum-meta"><span>${byEx.size} exercice${byEx.size > 1 ? 's' : ''}</span><span>${s.sets.length} série${s.sets.length > 1 ? 's' : ''}</span><span>${L.volume} <b>${fmtNum(Math.round(volume))} kg</b></span></div>
             ${cardioHtml}
           </div>
@@ -654,6 +670,7 @@
   }
 
   function svgChart(points, { label = 'Évolution de la charge' } = {}) {
+    if (theme() === 'nes') return svgBlockChart(points, label);
     const W = 340, H = 130, padL = 30, padR = 12, padT = 14, padB = 24;
     const vals = points.map((p) => p[1]);
     let min = Math.min(...vals), max = Math.max(...vals);
@@ -683,6 +700,43 @@
         const anchor = points.length > 1 && i === 0 ? 'start' : (points.length > 1 && i === points.length - 1 ? 'end' : 'middle');
         const dx = anchor === 'start' ? 4 : anchor === 'end' ? -4 : 0;
         svg += `<text class="val" x="${(x(i) + dx).toFixed(1)}" y="${(y(p[1]) - 7).toFixed(1)}" text-anchor="${anchor}">${fmtNum(p[1])}</text>`;
+      }
+    });
+    return svg + '</svg>';
+  }
+
+  /** Thème 8 bits : histogramme en blocs (un bloc par 5 kg, ou 2,5 kg quand l'amplitude est faible), barre max en jaune. */
+  function svgBlockChart(points, label) {
+    const W = 340, H = 130, padL = 30, padR = 8, padT = 14, padB = 24, gap = 2;
+    const vals = points.map((p) => p[1]);
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    const unit = hi - lo <= 15 ? 2.5 : 5;
+    const floor = Math.max(0, Math.floor(lo / unit) * unit - unit);
+    const blocks = (v) => Math.max(1, Math.round((v - floor) / unit));
+    const maxBlocks = Math.max(...vals.map(blocks));
+    const availH = H - padT - padB;
+    const bh = Math.max(2, Math.min(14, Math.floor((availH - gap * (maxBlocks - 1)) / maxBlocks)));
+    const slot = (W - padL - padR) / points.length;
+    const bw = Math.min(26, Math.max(6, Math.floor(slot * 0.6)));
+    const x = (i) => padL + slot * i + (slot - bw) / 2;
+    const baseY = H - padB;
+    const yTop = (n) => baseY - n * bh - (n - 1) * gap;
+    const fmtTick = (t) => (unit < 5 ? fmtNum(Number(t.toFixed(1))) : String(Math.round(t)));
+    let svg = `<svg class="chart chart-blocks" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
+    svg += `<line class="grid" x1="${padL}" x2="${W - padR}" y1="${baseY + 1}" y2="${baseY + 1}"/>`;
+    for (const k of [...new Set([1, Math.ceil(maxBlocks / 2), maxBlocks])]) {
+      svg += `<text x="${padL - 4}" y="${(yTop(k) + 6).toFixed(1)}" text-anchor="end">${fmtTick(floor + k * unit)}</text>`;
+    }
+    const step = Math.ceil(points.length / 6);
+    points.forEach((p, i) => {
+      const n = blocks(p[1]);
+      const cls = p[1] === hi ? 'blk max' : 'blk';
+      for (let b = 1; b <= n; b++) svg += `<rect class="${cls}" x="${x(i).toFixed(1)}" y="${yTop(b).toFixed(1)}" width="${bw}" height="${bh}"/>`;
+      if (i % step === 0 || i === points.length - 1) {
+        svg += `<text x="${(x(i) + bw / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle">${fmtDate(p[0]).slice(0, 5)}</text>`;
+        const anchor = points.length > 1 && i === 0 ? 'start' : (points.length > 1 && i === points.length - 1 ? 'end' : 'middle');
+        const tx = anchor === 'start' ? x(i) : anchor === 'end' ? x(i) + bw : x(i) + bw / 2;
+        svg += `<text class="val${p[1] === hi ? ' max' : ''}" x="${tx.toFixed(1)}" y="${(yTop(n) - 4).toFixed(1)}" text-anchor="${anchor}">${fmtNum(p[1])}</text>`;
       }
     });
     return svg + '</svg>';
@@ -1012,7 +1066,7 @@
     }
 
     bindEvents();
-    applyTheme(isRetro() ? 'retro' : 'modern', { rerender: false });
+    applyTheme(theme(), { rerender: false });
     restoreRest();
     updateChrono();
     let start = 'today';
