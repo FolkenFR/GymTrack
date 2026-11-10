@@ -12,6 +12,10 @@
   <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    // Thème choisi dans l'onglet Données, appliqué avant le premier rendu pour éviter un flash.
+    try { if (localStorage.getItem('gymtrack:theme') === 'retro') document.documentElement.setAttribute('data-theme', 'retro'); } catch (e) { /* ignore */ }
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -26,6 +30,8 @@
       <div class="rest-text"><span class="rest-label">Repos</span><span class="rest-sub" id="rest-sub"></span></div>
       <button class="btn rest-btn" id="rest-plus" type="button">+30 s</button>
       <span class="rest-time" id="rest-time">60</span>
+      <span class="rest-ready" aria-hidden="true">READY!</span>
+      <div class="rest-hp" id="rest-hp" aria-hidden="true"></div>
       <button class="btn rest-btn" id="rest-stop" type="button">Passer</button>
     </div>
     <div class="rest-bar"><div class="rest-fill" id="rest-fill"></div></div>
@@ -173,6 +179,14 @@
         <button id="btn-reset" class="btn danger">Revenir au seed</button>
       </div>
       <div class="card">
+        <h2>Thème</h2>
+        <p class="muted small">Moderne (affiche de salle) ou rétro 16 bits (console de salon). Le choix est mémorisé sur cet appareil.</p>
+        <div class="segmented theme-select" id="theme-select" role="group" aria-label="Thème">
+          <button type="button" data-theme-choice="modern" class="active">Moderne</button>
+          <button type="button" data-theme-choice="retro">Rétro 16 bits</button>
+        </div>
+      </div>
+      <div class="card">
         <h2>Programme</h2>
         <div id="programme-rules" class="small"></div>
       </div>
@@ -182,22 +196,22 @@
 
   <nav class="tabbar" id="tabbar">
     <button data-target="today" class="active" aria-label="Aujourd'hui">
-      <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM4 7l2-3h12l2 3M9 12h6"/></svg><span>Aujourd'hui</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4zM4 7l2-3h12l2 3M9 12h6"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M1 5h2v6H1zM3 3h2v10H3zM5 7h6v2H5zM11 3h2v10h-2zM13 5h2v6h-2z"/></svg><span>Aujourd'hui</span>
     </button>
     <button data-target="history" aria-label="Historique">
-      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Historique</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M2 3h2v2H2zM5 3h9v2H5zM2 7h2v2H2zM5 7h9v2H5zM2 11h2v2H2zM5 11h6v2H5z"/></svg><span>Historique</span>
     </button>
     <button data-target="progress" aria-label="Progression">
-      <svg viewBox="0 0 24 24"><path d="M4 18L10 11l4 4 6-8"/></svg><span>Progression</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18L10 11l4 4 6-8"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M1 11h3v4H1zM5 8h3v7H5zM9 5h3v10H9zM13 2h2v13h-2zM11 1h4v1h-4zM12 0h2v1h-2z"/></svg><span>Progression</span>
     </button>
     <button data-target="cardio" aria-label="Cardio">
-      <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span>Cardio</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M2 2h3v1H2zM9 2h3v1H9zM1 3h5v1H1zM8 3h5v1H8zM1 4h12v3H1zM2 7h10v1H2zM3 8h8v1H3zM4 9h6v1H4zM5 10h4v1H5zM6 11h2v1H6z"/></svg><span>Cardio</span>
     </button>
     <button data-target="profil" aria-label="Profil">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg><span>Profil</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M5 1h6v6H5zM6 4h1v1H6zM9 4h1v1H9zM7 7h2v2H7zM3 9h10v6H3zM1 10h2v5H1zM13 10h2v5h-2z"/></svg><span>Profil</span>
     </button>
     <button data-target="data" aria-label="Données">
-      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Données</span>
+      <svg class="icon-modern" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><svg class="icon-retro" viewBox="0 0 16 16" shape-rendering="crispEdges" fill-rule="evenodd" aria-hidden="true"><path d="M1 1h12v1h1v1h1v12H1zM4 2h7v3H4zM3 9h10v5H3zM4 11h8v1H4z"/></svg><span>Données</span>
     </button>
   </nav>
 

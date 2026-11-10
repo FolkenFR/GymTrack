@@ -7,6 +7,7 @@
 
   const STORAGE_KEY = 'gymtrack:data:v1';
   const SESSION_KEY = 'gymtrack:session';
+  const THEME_KEY = 'gymtrack:theme';
   const SEED_URL = 'data/seed.json';
   const PROG_URL = 'data/programme.json';
 
@@ -227,6 +228,24 @@
     return ordered.concat([...names].sort((a, b) => a.localeCompare(b, 'fr')));
   }
 
+  // ---------- Thème (moderne / rétro 16 bits) ----------
+  // L'attribut est posé avant le premier rendu par le script inline de index.html.
+  const isRetro = () => document.documentElement.getAttribute('data-theme') === 'retro';
+  function applyTheme(name, { rerender = true } = {}) {
+    const retro = name === 'retro';
+    if (retro) document.documentElement.setAttribute('data-theme', 'retro');
+    else document.documentElement.removeAttribute('data-theme');
+    try { retro ? localStorage.setItem(THEME_KEY, 'retro') : localStorage.removeItem(THEME_KEY); } catch (_) { /* ignore */ }
+    const meta = $('meta[name=theme-color]');
+    if (meta) meta.content = retro ? '#0f0f23' : '#141a2b';
+    $$('#theme-select button').forEach((b) => b.classList.toggle('active', (b.dataset.themeChoice === 'retro') === retro));
+    if (rerender) { renderHpBar(); const cur = $$('.screen').find((sc) => !sc.hidden); if (cur) render[cur.dataset.screen]?.(); }
+  }
+  /** Libellés ludiques du thème rétro (le reste du texte ne change pas). */
+  const labels = () => (isRetro()
+    ? { progress: 'LEVEL UP', volume: 'EXP' }
+    : { progress: 'Progression', volume: 'volume' });
+
   // ---------- Navigation ----------
   function showScreen(name) {
     $$('.screen').forEach((s) => (s.hidden = s.dataset.screen !== name));
@@ -400,6 +419,7 @@
     const remaining = Math.max(0, Math.ceil(remainingMs / 1000));
     $('#rest-time').textContent = String(remaining);
     $('#rest-fill').style.width = `${Math.max(0, Math.min(100, (remainingMs / (rest.total * 1000)) * 100))}%`;
+    renderHpBar(remaining);
     if (remaining <= 0 && !rest.fired) {
       rest.fired = true;
       $('#rest-timer').classList.add('over');
@@ -408,6 +428,15 @@
       beep();
       setTimeout(() => { if (rest.fired) stopRest(); }, 6000);
     }
+  }
+  /** Thème rétro : barre de PV, un segment par tranche de 5 s, qui se vide. */
+  function renderHpBar(remaining = Math.max(0, Math.ceil((rest.endAt - Date.now()) / 1000))) {
+    const bar = $('#rest-hp');
+    if (!bar || !isRetro() || !rest.endAt) return;
+    const total = Math.max(1, Math.ceil(rest.total / 5));
+    if (bar.childElementCount !== total) bar.innerHTML = '<span></span>'.repeat(total);
+    const on = Math.ceil(remaining / 5);
+    Array.from(bar.children).forEach((seg, i) => seg.classList.toggle('off', i >= on));
   }
   function stopRest() {
     rest.endAt = 0;
@@ -554,6 +583,7 @@
       groups.get(key).sets.push(e);
     }
     const sessions = [...groups.values()].sort((a, b) => b.date.localeCompare(a.date) || a.seance.localeCompare(b.seance, 'fr'));
+    const L = labels();
     $('#history-count').textContent = `${sessions.length} séance${sessions.length > 1 ? 's' : ''}, ${rows.length} série${rows.length > 1 ? 's' : ''}`;
     const root = $('#history-sessions');
     if (!sessions.length) { root.innerHTML = '<p class="empty">Aucune séance</p>'; return; }
@@ -576,7 +606,7 @@
         const cmp = loadVsPrevious(name, s.date);
         const better = !!(cmp && cmp.better);
         if (better) progressions += 1;
-        const badge = better ? `<span class="badge-progress" title="${cmp.counterweight ? 'Contrepoids' : 'Charge max'} ${fmtNum(cmp.top)} contre ${fmtNum(cmp.prev)} la fois précédente">Progression ${cmp.counterweight ? '−' : '+'}${fmtNum(cmp.delta)}</span>` : '';
+        const badge = better ? `<span class="badge-progress" title="${cmp.counterweight ? 'Contrepoids' : 'Charge max'} ${fmtNum(cmp.top)} contre ${fmtNum(cmp.prev)} la fois précédente">${L.progress} ${cmp.counterweight ? '−' : '+'}${fmtNum(cmp.delta)}</span>` : '';
         const top = cmp ? `<span class="ex-top">${fmtNum(cmp.top)}${cmp.counterweight ? ' cp' : ' kg'}</span>` : '';
         return `<tr class="ex-line"><td colspan="5"><span class="ex-name">${esc(name)}</span> <span class="muted">${sets.length} série${sets.length > 1 ? 's' : ''}</span> ${top}${badge}</td></tr>`
           + sets.map((e) => setRowHtml(e, { withDate: false, withExercise: false })).join('');
@@ -596,7 +626,7 @@
         <summary>
           <div class="session-sum">
             <div class="session-sum-head"><span class="session-date">${fmtDate(s.date)}</span><span class="session-type">${esc(s.seance) || 'Séance'}</span>${progressions ? `<span class="badge-progress">${progressions} ↑</span>` : ''}</div>
-            <div class="session-sum-meta"><span>${byEx.size} exercice${byEx.size > 1 ? 's' : ''}</span><span>${s.sets.length} série${s.sets.length > 1 ? 's' : ''}</span><span>volume <b>${fmtNum(Math.round(volume))} kg</b></span></div>
+            <div class="session-sum-meta"><span>${byEx.size} exercice${byEx.size > 1 ? 's' : ''}</span><span>${s.sets.length} série${s.sets.length > 1 ? 's' : ''}</span><span>${L.volume} <b>${fmtNum(Math.round(volume))} kg</b></span></div>
             ${cardioHtml}
           </div>
         </summary>
@@ -640,9 +670,13 @@
     for (const t of ticks) svg += `<line class="grid" x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"/><text x="${padL - 4}" y="${(y(t) + 3).toFixed(1)}" text-anchor="end">${fmtTick(t)}</text>`;
     const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p[1]).toFixed(1)}`).join(' ');
     svg += `<path class="line" d="${path}"/>`;
+    // Thème rétro : même série en escalier (H puis V) et marqueurs carrés, affichés par CSS.
+    const stepPath = points.map((p, i) => (i ? `H${x(i).toFixed(1)} V${y(p[1]).toFixed(1)}` : `M${x(0).toFixed(1)},${y(p[1]).toFixed(1)}`)).join(' ');
+    svg += `<path class="line-step" d="${stepPath}"/>`;
     const step = Math.ceil(points.length / 6);
     points.forEach((p, i) => {
       svg += `<circle class="dot" cx="${x(i).toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="3.5"/>`;
+      svg += `<rect class="dot-px" x="${(x(i) - 4).toFixed(1)}" y="${(y(p[1]) - 4).toFixed(1)}" width="8" height="8"/>`;
       if (i % step === 0 || i === points.length - 1) {
         svg += `<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle">${fmtDate(p[0]).slice(0, 5)}</text>`;
         // Première et dernière étiquette ancrées vers l'intérieur pour ne pas chevaucher les graduations.
@@ -937,6 +971,10 @@
       }
       e.target.value = '';
     });
+    $('#theme-select').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-theme-choice]');
+      if (b) applyTheme(b.dataset.themeChoice);
+    });
     $('#btn-reset').addEventListener('click', async () => {
       if (!confirm('Effacer les données locales et recharger le seed ?')) return;
       try {
@@ -974,6 +1012,7 @@
     }
 
     bindEvents();
+    applyTheme(isRetro() ? 'retro' : 'modern', { rerender: false });
     restoreRest();
     updateChrono();
     let start = 'today';

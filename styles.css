@@ -340,3 +340,246 @@ ul.plain li { margin: 3px 0; }
   .tabbar button { font-size: 15px; }
   .rest-time { font-size: 144px; }
 }
+
+/* =====================================================================
+ * Thème « Rétro 16 bits » — html[data-theme="retro"]. Voir DESIGN.md.
+ * Boîtes de dialogue de RPG : bordures pleines de 4 px, biseau deux tons en
+ * box-shadow, aucun arrondi, aucun flou. Fontes pixel auto-hébergées.
+ * ===================================================================== */
+@font-face { font-family: 'Silkscreen'; font-style: normal; font-weight: 400; font-display: swap; src: url('assets/fonts/silkscreen-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Silkscreen'; font-style: normal; font-weight: 700; font-display: swap; src: url('assets/fonts/silkscreen-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Pixelify Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('assets/fonts/pixelify-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Pixelify Sans'; font-style: normal; font-weight: 500; font-display: swap; src: url('assets/fonts/pixelify-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Pixelify Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('assets/fonts/pixelify-sans-latin-700-normal.woff2') format('woff2'); }
+
+html[data-theme="retro"] {
+  --encre: #0f0f23;        /* nuit de console */
+  --ardoise: #171d4a;      /* panneau */
+  --ardoise-2: #2a3a8c;    /* bleu royal : boutons, filets */
+  --filet: #2a3a8c;
+  --craie: #fff4d6;        /* crème */
+  --gris: #a9b6ea;         /* bleu pâle : texte secondaire */
+  --braise: #ff8c3a;       /* orange couchant = maintenant */
+  --braise-ink: #1a0a00;
+  --cyan: #5ce0a0;         /* menthe = fait */
+  --cyan-ink: #052a18;
+  --cyan-dim: #0c3a26;
+  --rose: #ff5fa2;         /* rose vif = danger */
+  --sky: #5ab4ff;          /* ciel : sélection, focus, biseau clair */
+  --gold: #ffd23f;         /* or : LEVEL UP, EXP, courbes, chrono */
+  --bevel-hi: #5ab4ff;
+  --bevel-lo: #07071a;
+  /* Corps en Barlow : le 5 de Pixelify Sans se confond avec un S à 17 px (voir DESIGN.md).
+   * Pixelify Sans ne porte que les titres (mots), Silkscreen les chiffres et les étiquettes. */
+  --font-text: 'Barlow', 'Arial Narrow', system-ui, sans-serif;
+  --font-display: 'Silkscreen', monospace;
+  --font-title: 'Pixelify Sans', 'Barlow', system-ui, sans-serif;
+  --r-ctl: 0;
+  --r-panel: 0;
+  /* Biseaux : clair en haut/gauche, sombre en bas/droite. */
+  --bevel-out: inset 2px 2px 0 var(--bevel-hi), inset -2px -2px 0 var(--bevel-lo);
+  --bevel-in: inset 2px 2px 0 var(--bevel-lo), inset -2px -2px 0 var(--ardoise-2);
+}
+html[data-theme="retro"] body {
+  font-size: 17px; line-height: 1.4;
+}
+html[data-theme="retro"] body::after {
+  /* Balayage CRT statique : 1 px sur 2, ≤ 6 % d'opacité, sans scintillement. */
+  content: ''; position: fixed; inset: 0; z-index: 100; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .06) 0 1px, transparent 1px 2px);
+}
+html[data-theme="retro"] img { image-rendering: pixelated; }
+html[data-theme="retro"] :focus-visible { outline: 3px solid var(--sky); outline-offset: 0; }
+html[data-theme="retro"] ::selection { background: var(--gold); color: var(--encre); }
+html[data-theme="retro"] code { border-radius: 0; font-family: var(--font-display); font-size: .8em; }
+html[data-theme="retro"] h1, html[data-theme="retro"] h2, html[data-theme="retro"] h3 { font-family: var(--font-title); font-weight: 700; }
+html[data-theme="retro"] h2 { font-size: 24px; }
+html[data-theme="retro"] h3 { font-size: 20px; }
+html[data-theme="retro"] .section-title { color: var(--gold); }
+
+/* --- En-tête : HUD d'arcade --- */
+html[data-theme="retro"] .topbar {
+  background: var(--ardoise); border-bottom: 4px solid var(--ardoise-2); box-shadow: var(--bevel-out);
+  padding: calc(10px + env(safe-area-inset-top)) 16px 8px; align-items: center;
+}
+html[data-theme="retro"] .topbar::after { display: none; }
+html[data-theme="retro"] .brand { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gold); text-shadow: 2px 2px 0 var(--bevel-lo); }
+html[data-theme="retro"] .topbar-date { font-family: var(--font-display); font-size: 11px; }
+html[data-theme="retro"] .chrono {
+  font-family: var(--font-display); font-size: 13px; color: var(--gold); padding: 6px 0 0; margin: 0; line-height: 1;
+}
+html[data-theme="retro"] .chrono::before { content: 'TIME'; position: static; display: inline; height: auto; background: none; color: var(--gris); margin-right: 10px; }
+html[data-theme="retro"] .chrono::after { display: none; }
+html[data-theme="retro"] .chrono.stopped { color: var(--cyan); }
+
+/* --- Contrôles : boutons en relief, champs en creux --- */
+html[data-theme="retro"] .field { font-family: var(--font-display); font-size: 11px; text-transform: uppercase; }
+html[data-theme="retro"] .field input, html[data-theme="retro"] .field select,
+html[data-theme="retro"] .set-row input[type=number] {
+  border: 0; background: var(--encre); box-shadow: var(--bevel-in); text-transform: none;
+}
+html[data-theme="retro"] .field input, html[data-theme="retro"] .field select { font-family: var(--font-text); }
+html[data-theme="retro"] .card .field input, html[data-theme="retro"] .card .field select { background: var(--encre); }
+html[data-theme="retro"] .field input:focus, html[data-theme="retro"] .field select:focus,
+html[data-theme="retro"] .set-row input[type=number]:focus { box-shadow: var(--bevel-in), 0 0 0 2px var(--sky); }
+html[data-theme="retro"] .field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' shape-rendering='crispEdges' fill='%23a9b6ea'%3E%3Cpath d='M3 5h10v2H3zM5 7h6v2H5zM7 9h2v2H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+}
+html[data-theme="retro"] .field .age { color: var(--gold); text-transform: none; }
+html[data-theme="retro"] .btn {
+  border: 0; background: var(--ardoise-2); color: var(--craie); font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  box-shadow: var(--bevel-out), 0 4px 0 var(--bevel-lo); margin-bottom: 4px; letter-spacing: 0;
+}
+html[data-theme="retro"] .btn:active, html[data-theme="retro"] .set-ok:active { transform: translateY(2px); box-shadow: var(--bevel-out), 0 2px 0 var(--bevel-lo); background: var(--ardoise-2); }
+html[data-theme="retro"] .btn.primary { background: var(--braise); color: var(--braise-ink); --bevel-hi: #ffc38a; --bevel-lo: #8a3a00; }
+html[data-theme="retro"] .btn.primary:active { background: var(--braise); }
+html[data-theme="retro"] .btn.danger { background: var(--encre); color: var(--rose); --bevel-hi: var(--rose); --bevel-lo: #6a1040; }
+html[data-theme="retro"] .btn.ghost { background: var(--encre); color: var(--gris); --bevel-hi: var(--ardoise-2); }
+html[data-theme="retro"] .btn.ghost:active { background: var(--encre); }
+html[data-theme="retro"] .btn.icon { font-family: var(--font-text); font-size: 22px; }
+html[data-theme="retro"] .check { font-family: var(--font-text); }
+html[data-theme="retro"] .check input { accent-color: var(--gold); }
+
+/* --- Panneaux : boîte de dialogue --- */
+html[data-theme="retro"] .card, html[data-theme="retro"] .tile, html[data-theme="retro"] .demo[open], html[data-theme="retro"] .toast {
+  border: 4px solid var(--ardoise-2); box-shadow: var(--bevel-out); background: var(--ardoise);
+}
+html[data-theme="retro"] .card { padding: 18px; }
+html[data-theme="retro"] .card h2 { color: var(--gold); }
+html[data-theme="retro"] .toast { color: var(--craie); font-family: var(--font-display); font-size: 12px; padding: 12px 16px; }
+
+/* --- Aujourd'hui --- */
+html[data-theme="retro"] .session-head h2 { font-size: 26px; color: var(--gold); }
+html[data-theme="retro"] .session-head .jour, html[data-theme="retro"] .exo-n { font-family: var(--font-display); font-size: 11px; }
+html[data-theme="retro"] .exo { border-top: 2px solid var(--ardoise-2); }
+html[data-theme="retro"] .exo-head h3 { font-size: 21px; }
+html[data-theme="retro"] .exo-target .t-load { font-size: 30px; letter-spacing: 0; text-shadow: 3px 3px 0 var(--bevel-lo); }
+html[data-theme="retro"] .exo-target .t-load small { font-size: 11px; margin-left: 6px; }
+html[data-theme="retro"] .exo-target .t-sets { font-size: 18px; }
+html[data-theme="retro"] .exo-target .t-rest { font-family: var(--font-display); font-size: 10px; }
+html[data-theme="retro"] .exo-last strong { font-family: var(--font-display); font-size: 12px; }
+html[data-theme="retro"] .pill { border: 2px solid var(--cyan); font-family: var(--font-display); font-size: 11px; padding-right: 2px; }
+html[data-theme="retro"] .pill b { border-radius: 0; font-size: 12px; min-width: 32px; }
+html[data-theme="retro"] .pill.warm { border-color: var(--ardoise-2); }
+html[data-theme="retro"] .pill i { font-family: var(--font-text); font-size: 13px; }
+html[data-theme="retro"] .set-row { padding-left: 8px; border-left: 0; }
+html[data-theme="retro"] .set-row .n { font-size: 13px; }
+html[data-theme="retro"] .sets .set-row:first-child .n { background: var(--braise); color: var(--braise-ink); line-height: 26px; }
+html[data-theme="retro"] .set-row input[type=number] { font-family: var(--font-display); font-size: 18px; font-weight: 400; }
+html[data-theme="retro"] .sets .set-row:not(:first-child) input[type=number] { font-size: 15px; }
+html[data-theme="retro"] .set-row .unit, html[data-theme="retro"] .chk { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; }
+html[data-theme="retro"] .chk { border: 0; background: var(--encre); box-shadow: var(--bevel-in); }
+html[data-theme="retro"] .chk.on { background: var(--ardoise-2); color: var(--gold); }
+html[data-theme="retro"] .set-ok {
+  border: 0; background: var(--braise); color: var(--braise-ink); font-size: 24px;
+  box-shadow: inset 2px 2px 0 #ffc38a, inset -2px -2px 0 #8a3a00, 0 4px 0 var(--bevel-lo); margin-bottom: 4px;
+}
+html[data-theme="retro"] .set-ok:active { box-shadow: inset 2px 2px 0 #ffc38a, inset -2px -2px 0 #8a3a00, 0 2px 0 var(--bevel-lo); background: var(--braise); }
+html[data-theme="retro"] .sets .set-row:not(:first-child) .set-ok { background: var(--encre); color: var(--braise); box-shadow: var(--bevel-out), 0 4px 0 var(--bevel-lo); --bevel-hi: var(--ardoise-2); }
+html[data-theme="retro"] .sets .set-row:not(:first-child) .set-ok:active { background: var(--encre); box-shadow: var(--bevel-out), 0 2px 0 var(--bevel-lo); }
+html[data-theme="retro"] .demo summary { border: 2px solid var(--ardoise-2); font-family: var(--font-display); font-size: 10px; }
+html[data-theme="retro"] .demo[open] summary { border: 0; }
+html[data-theme="retro"] .demo img { border-radius: 0; border: 3px solid var(--craie); }
+html[data-theme="retro"] .demo .credit { font-size: 12px; }
+
+/* --- Historique : LEVEL UP et EXP --- */
+html[data-theme="retro"] .segmented button { font-family: var(--font-display); font-size: 10px; border-bottom: 0; padding: 0 2px; }
+html[data-theme="retro"] .segmented button::before { content: '▶'; display: inline-block; width: 1.4em; color: transparent; }
+html[data-theme="retro"] .segmented button.active { color: var(--sky); }
+html[data-theme="retro"] .segmented button.active::before { color: var(--gold); }
+html[data-theme="retro"] .between #history-count { font-family: var(--font-display); font-size: 9px; }
+html[data-theme="retro"] .table { font-size: 16px; }
+html[data-theme="retro"] .table th { font-family: var(--font-display); font-size: 9px; text-transform: uppercase; }
+html[data-theme="retro"] .table th, html[data-theme="retro"] .table td { border-bottom: 2px solid var(--ardoise); }
+html[data-theme="retro"] .card.session-card { border: 0; box-shadow: none; background: none; border-top: 2px solid var(--ardoise-2); }
+html[data-theme="retro"] .session-sum-head { font-family: var(--font-display); font-size: 13px; }
+html[data-theme="retro"] .session-type { color: var(--sky); }
+html[data-theme="retro"] .session-sum-meta { font-size: 15px; }
+html[data-theme="retro"] .cardio-item .t, html[data-theme="retro"] .tile-label { font-family: var(--font-title); }
+html[data-theme="retro"] .session-sum-meta b { color: var(--gold); font-family: var(--font-display); font-size: 11px; }
+html[data-theme="retro"] .session-table .ex-line td { background: var(--ardoise); }
+html[data-theme="retro"] .session-table .ex-name { font-family: var(--font-title); font-size: 18px; }
+html[data-theme="retro"] .session-table .ex-top { color: var(--cyan); font-family: var(--font-display); font-size: 11px; }
+html[data-theme="retro"] .badge-progress {
+  background: var(--gold); color: var(--encre); border-radius: 0; font-size: 10px; padding: 4px 6px 3px;
+  box-shadow: 2px 2px 0 var(--bevel-lo);
+}
+
+/* --- Progression : ligne en escalier or sur grille marine --- */
+html[data-theme="retro"] .chart-card { border-top: 2px solid var(--ardoise-2); }
+html[data-theme="retro"] .chart-card h3 span { color: var(--gold); font-family: var(--font-display); font-size: 16px; }
+html[data-theme="retro"] .chart-card h3 span small, html[data-theme="retro"] .chart-card h3 span em { font-size: 10px; }
+html[data-theme="retro"] .chart .grid { stroke: var(--ardoise-2); stroke-width: 2; shape-rendering: crispEdges; stroke-dasharray: 2 4; }
+html[data-theme="retro"] .chart .line, html[data-theme="retro"] .chart .dot { display: none; }
+html[data-theme="retro"] .chart .line-step { display: block; fill: none; stroke: var(--gold); stroke-width: 3; stroke-linejoin: miter; shape-rendering: crispEdges; }
+html[data-theme="retro"] .chart .dot-px { display: block; fill: var(--craie); stroke: var(--encre); stroke-width: 2; shape-rendering: crispEdges; }
+.chart .line-step, .chart .dot-px { display: none; }
+html[data-theme="retro"] .chart text { font-family: var(--font-display); font-size: 8px; }
+html[data-theme="retro"] .chart .val { fill: var(--gold); font-size: 8px; }
+
+/* --- Cardio, gainage, pesées --- */
+html[data-theme="retro"] .card.cardio-item { border: 0; box-shadow: none; background: none; border-top: 2px solid var(--ardoise-2); }
+html[data-theme="retro"] .cardio-item .d { font-family: var(--font-display); font-size: 10px; padding-top: 5px; }
+
+/* --- Profil : tuiles de statut --- */
+html[data-theme="retro"] .tile { padding: 12px 12px 10px; }
+html[data-theme="retro"] .tile-value { font-family: var(--font-display); font-size: 15px; color: var(--gold); white-space: normal; line-height: 1.3; }
+html[data-theme="retro"] .tile-label { font-size: 14px; }
+
+/* --- Onglets : barre de menu en bas --- */
+.tabbar .icon-retro { display: none; }
+html[data-theme="retro"] .tabbar .icon-modern { display: none; }
+html[data-theme="retro"] .tabbar .icon-retro { display: block; }
+html[data-theme="retro"] .tabbar { background: var(--ardoise); border-top: 4px solid var(--ardoise-2); box-shadow: var(--bevel-out); }
+html[data-theme="retro"] .tabbar button { font-family: var(--font-title); font-weight: 500; font-size: 11px; letter-spacing: -.04em; padding: 0; gap: 3px; }
+html[data-theme="retro"] .tabbar button svg { width: 24px; height: 24px; fill: currentColor; stroke: none; shape-rendering: crispEdges; }
+html[data-theme="retro"] .tabbar button.active { color: var(--sky); }
+html[data-theme="retro"] .tabbar button.active::before { top: -4px; height: 4px; left: 10px; right: 10px; background: var(--gold); }
+html[data-theme="retro"] .tabbar button.active::after {
+  /* Curseur ▶ de menu, à gauche de l'icône. */
+  content: ''; position: absolute; top: 14px; left: 4px; width: 0; height: 0;
+  border-left: 6px solid var(--gold); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+}
+@media (max-width: 360px) { html[data-theme="retro"] .tabbar button { font-size: 10px; } }
+
+/* --- Repos : barre de PV segmentée --- */
+.rest-hp { display: none; }
+.rest-ready { display: none; }
+html[data-theme="retro"] .rest-timer { background: var(--ardoise); border-bottom: 4px solid var(--ardoise-2); box-shadow: var(--bevel-out); }
+html[data-theme="retro"] .rest-inner {
+  grid-template-columns: 1fr 1fr; grid-template-areas: 'text text' 'time time' 'ready ready' 'hp hp' 'plus stop';
+  gap: 6px 12px; padding: 12px 16px 14px;
+}
+html[data-theme="retro"] .rest-text { grid-area: text; font-family: var(--font-display); font-size: 11px; }
+html[data-theme="retro"] .rest-time {
+  grid-area: time; font-size: 72px; line-height: 1; letter-spacing: 0; color: var(--braise);
+  text-shadow: 4px 4px 0 var(--bevel-lo); min-width: 0; position: relative;
+}
+html[data-theme="retro"] .rest-timer.over .rest-time { color: var(--cyan); }
+html[data-theme="retro"] .rest-hp { grid-area: hp; display: flex; gap: 3px; height: 18px; padding: 3px; background: var(--encre); box-shadow: var(--bevel-in); }
+html[data-theme="retro"] .rest-hp span { flex: 1; background: var(--braise); box-shadow: inset 0 -3px 0 #c45a10; }
+html[data-theme="retro"] .rest-hp span.off { background: transparent; box-shadow: none; }
+html[data-theme="retro"] .rest-timer.over .rest-hp span { background: var(--cyan); box-shadow: inset 0 -3px 0 #2a9a66; }
+html[data-theme="retro"] .rest-bar { display: none; }
+html[data-theme="retro"] #rest-plus { grid-area: plus; justify-self: stretch; }
+html[data-theme="retro"] #rest-stop { grid-area: stop; justify-self: stretch; }
+html[data-theme="retro"] .rest-btn { font-size: 12px; min-height: 52px; }
+html[data-theme="retro"] .rest-timer.over .rest-ready {
+  display: block; grid-area: ready; justify-self: center;
+  font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gold); margin: -2px 0 2px;
+  animation: ready-blink 1s steps(2, end) infinite;
+}
+@keyframes ready-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="retro"] .rest-timer.over .rest-ready { animation: none; }
+}
+@media (min-width: 600px) {
+  html[data-theme="retro"] .rest-time { font-size: 88px; }
+}
+
+/* --- Données : choix du thème --- */
+.theme-select { display: flex; gap: 4px; margin-top: 4px; }
+.theme-select button { margin-right: 0; }
+html[data-theme="retro"] .form-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+html[data-theme="retro"] #btn-fcmax { font-size: 10px; white-space: normal; line-height: 1.3; padding: 0 6px; }
