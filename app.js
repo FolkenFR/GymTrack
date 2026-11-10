@@ -60,6 +60,7 @@
       gainage: withIds(raw.gainage || []),
       poids: withIds(raw.poids || []),
       profil: normalizeProfil(raw.profil),
+      seed_stamp: typeof raw.seed_stamp === 'string' ? raw.seed_stamp : '',
     };
   }
   function normalizeProfil(p) {
@@ -89,13 +90,38 @@
   async function loadSeed() {
     const seed = await fetchJSON(SEED_URL);
     data = normalize(seed);
+    data.seed_stamp = seed.exported_at || '';
     save();
+  }
+  /** Fusionne dans les données locales les lignes d'un seed plus récent que le dernier intégré
+   *  (sans toucher aux lignes saisies sur l'appareil). Retourne le nombre de lignes ajoutées. */
+  async function mergeNewerSeed() {
+    const seed = await fetchJSON(SEED_URL);
+    const stamp = seed.exported_at || '';
+    if (!stamp || stamp <= (data.seed_stamp || '')) return 0;
+    const keys = {
+      muscu: (e) => [e.date, e.exercice, e.serie].join('|'),
+      cardio: (e) => [e.date, e.type, e.duree_min].join('|'),
+      gainage: (e) => [e.date, e.exercice].join('|'),
+      poids: (e) => e.date,
+    };
+    let added = 0;
+    for (const coll of Object.keys(keys)) {
+      const have = new Set((data[coll] || []).map(keys[coll]));
+      for (const row of withIds(seed[coll] || [])) {
+        if (!have.has(keys[coll](row))) { data[coll].push(row); added++; }
+      }
+    }
+    data.seed_stamp = stamp;
+    save();
+    return added;
   }
   function exportJSON() {
     const strip = (list) => list.map(({ id, ...rest }) => rest);
     const sortByDate = (a, b) => a.date.localeCompare(b.date) || (a.serie ?? 0) - (b.serie ?? 0);
     return {
       version: 2,
+      seed_stamp: data.seed_stamp || '',
       exported_at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
       profil: { ...data.profil },
       muscu: strip([...data.muscu].sort(sortByDate)),
@@ -934,8 +960,13 @@
     buildAliasMap();
 
     const stored = load();
-    if (stored) data = stored;
-    else {
+    if (stored) {
+      data = stored;
+      try {
+        const added = await mergeNewerSeed();
+        if (added) setTimeout(() => toast(`${added} ligne${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''} depuis les données du dépôt`), 300);
+      } catch (err) { console.warn('Seed non fusionné', err); }
+    } else {
       try { await loadSeed(); } catch (err) { console.warn('Seed indisponible', err); save(); }
     }
 

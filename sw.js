@@ -1,7 +1,7 @@
 /* Service worker minimal : met en cache le shell de l'application pour un usage hors ligne.
  * Les fichiers de données (data/*.json) sont servis "réseau d'abord" pour refléter le dernier seed committé.
  * Incrémenter CACHE_NAME à chaque déploiement qui modifie les fichiers du shell. */
-const CACHE_NAME = 'gymtrack-v3';
+const CACHE_NAME = 'gymtrack-v4';
 const SHELL = [
   './',
   './index.html',
