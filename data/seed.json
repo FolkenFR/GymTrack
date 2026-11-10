@@ -1,6 +1,12 @@
 {
- "version": 1,
+ "version": 2,
  "exported_at": "2026-11-09T06:30:54Z",
+ "profil": {
+  "taille_cm": null,
+  "naissance": "",
+  "fc_max": 185,
+  "objectif": "Traction complète sans assistance ; hauteur de pied en ura mawashi"
+ },
  "muscu": [
   {
    "date": "2026-09-30",
@@ -1774,6 +1780,13 @@
    "series": 2,
    "valeur": "60",
    "unite": "s",
+   "note": ""
+  }
+ ],
+ "poids": [
+  {
+   "date": "2026-09-22",
+   "poids_kg": 84,
    "note": ""
   }
  ]

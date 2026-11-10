@@ -1,6 +1,6 @@
 # GymTrack
 
-Petite application web personnelle de suivi de musculation, cardio et gainage, pensée pour être utilisée sur téléphone à la salle. Site 100 % statique (HTML/CSS/JS, sans framework ni étape de build), installable comme PWA et utilisable hors ligne, hébergé sur GitHub Pages.
+Carnet d'entraînement (musculation, cardio, gainage, poids de corps) sous forme de petite application web, pensée pour être utilisée sur téléphone à la salle. Le dépôt est livré avec des données d'exemple : l'historique d'un pratiquant depuis le 30/09/2026 (`data/seed.json`). Site 100 % statique (HTML/CSS/JS, sans framework ni étape de build), installable comme PWA et utilisable hors ligne, hébergé sur GitHub Pages.
 
 ## Utilisation
 
@@ -9,9 +9,10 @@ Ouvrir l'URL GitHub Pages du dépôt (ou `index.html` via un petit serveur local
 ### Onglets
 
 - **Aujourd'hui** — la séance du jour est présélectionnée selon le jour de la semaine (lundi jambes, mardi poussée, mercredi cardio, jeudi tirage, vendredi cardio ou repos) ; on peut en choisir une autre ou changer la date. Pour chaque exercice : objectif (séries × reps @ charge), détail de charge, dernière performance enregistrée, un bloc « Voir la démo » (GIF chargé à la demande) et une ligne par série à valider (reps et kg préremplis, case « chauffe » pour une série d'échauffement). Valider une série l'enregistre, lance le **timer de repos** (90 s ou 60 s selon l'exercice, affiché en gros en haut de l'écran, avec vibration et bip à zéro, boutons +30 s / Passer) et démarre le **chrono de séance** dans l'en-tête (appuyer dessus pour le terminer). Le timer et le chrono sont calculés à partir d'horodatages : ils restent justes même si l'écran s'éteint. Le bloc « Autre exercice » permet d'enregistrer un exercice hors programme.
-- **Historique** — toutes les séries, les plus récentes en premier, filtrables par exercice et par date. Suppression possible ligne par ligne.
+- **Historique** — par défaut, une carte par séance (date + type de séance), la plus récente en premier : nombre d'exercices, nombre de séries, volume total (Σ reps × kg des séries hors échauffement, contrepoids compté tel quel) et la séance cardio du même jour s'il y en a une (durée, distance, FC moyenne). Appuyer sur une carte déplie ses séries, regroupées par exercice avec la charge max de la séance ; un badge **Progression +x** apparaît sur un exercice quand sa charge max (hors échauffement) dépasse celle de la séance précédente du même exercice (pour les exercices à contrepoids, traction et dips assistés, c'est au contraire un contrepoids plus bas qui compte : badge **Progression −x**), et la carte repliée affiche le nombre de progressions. Le bouton « Par séance / Toutes les séries » bascule vers le tableau à plat de toutes les séries. Les filtres exercice et date s'appliquent aux deux vues ; suppression possible série par série.
 - **Progression** — un graphique par exercice : charge maximale (hors échauffement) par séance.
 - **Cardio** — saisie et liste des séances de tapis, plus le gainage.
+- **Profil** — fiche (taille, date de naissance, FC max estimée avec un bouton « 220 − âge », objectif libre), journal du poids de corps (date, poids prérempli avec la dernière pesée, note ; liste et graphique SVG dans le temps) et tuiles calculées : IMC (taille + dernière pesée ; vide tant que la taille n'est pas renseignée), poids réellement tiré en traction (poids − contrepoids courant, c'est-à-dire la dernière série hors échauffement de « Traction assistée »), ratio chest press / poids de corps (charge max de la dernière séance de chest press) et zones cardiaques dérivées de la FC max (échauffement < 60 %, base 65–75 %, intervalles 80–88 %).
 - **Données** — export JSON, import JSON (remplacement ou fusion), retour au seed, rappel des règles de progression.
 
 ### Charges
@@ -21,6 +22,8 @@ Les charges sont enregistrées comme dans les CSV d'origine : charge totale pour
 ## Stockage et mise à jour des données
 
 Au premier lancement, `data/seed.json` est chargé dans le `localStorage` du navigateur. Ensuite tout vit dans le `localStorage` : le seed n'est relu que si l'on clique « Revenir au seed » (onglet Données).
+
+**Vie privée** : le dépôt est public. Il contient l'historique d'entraînement (séries, cardio, gainage, pesées), la FC max et l'objectif, mais aucune donnée identifiante. Les champs du profil qui décrivent la personne (taille, date de naissance) restent à `null` / vide dans `data/seed.json` ; ils ne sont écrits que dans le `localStorage` du téléphone. Si tu exportes puis commits un `seed.json`, pense à vider ces deux champs avant.
 
 Pour remonter les données saisies sur le téléphone dans le dépôt :
 
@@ -39,13 +42,17 @@ Format de `seed.json` :
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "exported_at": "2026-11-09T07:00:00Z",
+  "profil":  { "taille_cm": null, "naissance": "", "fc_max": 185, "objectif": "Traction complète sans assistance" },
   "muscu":   [{ "date": "2026-11-03", "seance": "Jambes", "exercice": "Hack squat", "serie": 2, "reps": 10, "charge_kg": 40, "chauffe": false, "note": "20 par côté" }],
   "cardio":  [{ "date": "2026-11-06", "type": "Intervalles", "duree_min": 47.2, "distance_km": 4.25, "fc_moy": 144, "fc_max": 172, "pente_moy_pct": 10.1, "note": "" }],
-  "gainage": [{ "date": "2026-10-28", "exercice": "Planche", "series": 2, "valeur": "60", "unite": "s", "note": "" }]
+  "gainage": [{ "date": "2026-10-28", "exercice": "Planche", "series": 2, "valeur": "60", "unite": "s", "note": "" }],
+  "poids":   [{ "date": "2026-09-22", "poids_kg": 84, "note": "" }]
 }
 ```
+
+La version 2 ajoute `profil` et `poids`. Un fichier de version 1 (sans ces clés, par exemple produit par `tools/csv_to_seed.py`) s'importe toujours : le profil est alors vide et la liste des pesées également. En mode « fusionner », les pesées sont dédoublonnées comme les autres entrées et seuls les champs renseignés du profil importé remplacent les champs locaux.
 
 ## Programme
 
@@ -76,7 +83,7 @@ Tous les chemins sont relatifs : le site fonctionne aussi bien à la racine d'un
 ## Arborescence
 
 ```
-index.html            structure des cinq écrans
+index.html            structure des six écrans
 app.js                logique (stockage, rendu, timer, graphiques SVG)
 styles.css            thème sombre, mobile-first
 sw.js                 service worker (cache hors ligne)

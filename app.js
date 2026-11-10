@@ -10,8 +10,11 @@
   const SEED_URL = 'data/seed.json';
   const PROG_URL = 'data/programme.json';
 
-  /** @type {{muscu: any[], cardio: any[], gainage: any[]}} */
-  let data = { muscu: [], cardio: [], gainage: [] };
+  /** Profil par défaut (un export ancien, sans `profil`, est complété avec ces valeurs). */
+  const PROFIL_DEFAULT = { taille_cm: null, naissance: '', fc_max: null, objectif: '' };
+
+  /** @type {{muscu: any[], cardio: any[], gainage: any[], poids: any[], profil: typeof PROFIL_DEFAULT}} */
+  let data = { muscu: [], cardio: [], gainage: [], poids: [], profil: { ...PROFIL_DEFAULT } };
   let programme = null;
   let aliasMap = new Map(); // nom historique -> nom canonique
 
@@ -55,6 +58,17 @@
       }))),
       cardio: withIds(raw.cardio || []),
       gainage: withIds(raw.gainage || []),
+      poids: withIds(raw.poids || []),
+      profil: normalizeProfil(raw.profil),
+    };
+  }
+  function normalizeProfil(p) {
+    const src = p && typeof p === 'object' ? p : {};
+    return {
+      taille_cm: toNum(src.taille_cm),
+      naissance: typeof src.naissance === 'string' ? src.naissance : '',
+      fc_max: toNum(src.fc_max),
+      objectif: typeof src.objectif === 'string' ? src.objectif : '',
     };
   }
   function save() {
@@ -81,11 +95,13 @@
     const strip = (list) => list.map(({ id, ...rest }) => rest);
     const sortByDate = (a, b) => a.date.localeCompare(b.date) || (a.serie ?? 0) - (b.serie ?? 0);
     return {
-      version: 1,
+      version: 2,
       exported_at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+      profil: { ...data.profil },
       muscu: strip([...data.muscu].sort(sortByDate)),
       cardio: strip([...data.cardio].sort(sortByDate)),
       gainage: strip([...data.gainage].sort(sortByDate)),
+      poids: strip([...data.poids].sort(sortByDate)),
     };
   }
 
@@ -127,6 +143,54 @@
       if (!byDate.has(e.date) || byDate.get(e.date) < v) byDate.set(e.date, v);
     }
     return [...byDate.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }
+  /** Exercice à contrepoids (traction, dips assistés) : progresser = baisser la charge. */
+  function isCounterweight(exName) {
+    const c = canon(exName);
+    return programme.seances.some((s) => (s.exercices || []).some((ex) => ex.nom === c && ex.contrepoids));
+  }
+  /** Charge de référence (hors échauffement) d'un exercice à une date donnée, comparée à la séance précédente.
+   *  Référence : charge max, ou contrepoids min pour les exercices assistés. `better` = progression. */
+  function loadVsPrevious(exName, date) {
+    const cw = isCounterweight(exName);
+    const byDate = new Map();
+    for (const e of setsFor(exName)) {
+      if (e.chauffe || e.charge_kg == null) continue;
+      const v = Number(e.charge_kg);
+      const cur = byDate.get(e.date);
+      if (cur == null || (cw ? v < cur : v > cur)) byDate.set(e.date, v);
+    }
+    const pts = [...byDate.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    const i = pts.findIndex((p) => p[0] === date);
+    if (i < 0) return null;
+    const top = pts[i][1], prev = i > 0 ? pts[i - 1][1] : null;
+    const better = prev != null && (cw ? top < prev : top > prev);
+    return { top, prev, better, delta: prev != null ? Math.abs(top - prev) : 0, counterweight: cw };
+  }
+  /** Dernière pesée (par date puis ordre de saisie). */
+  function lastWeight() {
+    if (!data.poids.length) return null;
+    return [...data.poids].sort((a, b) => a.date.localeCompare(b.date)).pop();
+  }
+  /** Contrepoids courant : dernière série (hors échauffement) de traction assistée. */
+  function currentCounterweight() {
+    const sets = setsFor('Traction assistée').filter((e) => !e.chauffe && e.charge_kg != null)
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.serie ?? 0) - (b.serie ?? 0));
+    return sets.length ? { date: sets[sets.length - 1].date, kg: Number(sets[sets.length - 1].charge_kg) } : null;
+  }
+  /** Charge max (hors échauffement) de la dernière séance de chest press. */
+  function lastChestPress() {
+    const pts = maxLoadPerSession('Chest press incliné');
+    return pts.length ? { date: pts[pts.length - 1][0], kg: pts[pts.length - 1][1] } : null;
+  }
+  function ageFrom(naissance, atISO = todayISO()) {
+    if (!naissance) return null;
+    const [y, m, d] = naissance.split('-').map(Number);
+    const [cy, cm, cd] = atISO.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    let age = cy - y;
+    if (cm < m || (cm === m && cd < d)) age -= 1;
+    return age >= 0 ? age : null;
   }
   function allExerciseNames() {
     const names = new Set();
@@ -414,6 +478,18 @@
   }
 
   // ---------- Rendu : Historique ----------
+  const HISTORY_VIEW_KEY = 'gymtrack:history-view';
+  const historyState = { view: 'sessions', open: new Set() };
+  try { historyState.view = sessionStorage.getItem(HISTORY_VIEW_KEY) === 'sets' ? 'sets' : 'sessions'; } catch (_) { /* ignore */ }
+
+  /** Ligne de série, partagée entre le tableau à plat et les cartes par séance. */
+  function setRowHtml(e, { withDate = true, withExercise = true } = {}) {
+    return `<tr class="${e.chauffe ? 'warm' : ''}">
+      ${withDate ? `<td>${fmtDate(e.date)}</td>` : ''}${withExercise ? `<td>${esc(e.exercice)}</td>` : ''}<td class="num">${fmtNum(e.serie)}</td>
+      <td class="num">${fmtNum(e.reps)}</td><td class="num">${fmtNum(e.charge_kg)}</td>
+      <td class="note">${esc(e.note)}</td><td><button class="del" data-del="${e.id}" aria-label="Supprimer">×</button></td></tr>`;
+  }
+
   function renderHistory() {
     const sel = $('#history-exercise');
     const current = sel.value;
@@ -423,14 +499,84 @@
     let rows = [...data.muscu];
     if (sel.value) rows = rows.filter((e) => canon(e.exercice) === sel.value);
     if (date) rows = rows.filter((e) => e.date === date);
+
+    $$('#history-view button').forEach((b) => b.classList.toggle('active', b.dataset.view === historyState.view));
+    const bySession = historyState.view === 'sessions';
+    $('#history-sessions').hidden = !bySession;
+    $('#history-table-wrap').hidden = bySession;
+    if (bySession) renderHistorySessions(rows);
+    else renderHistoryTable(rows);
+  }
+
+  function renderHistoryTable(rows) {
     rows.sort((a, b) => b.date.localeCompare(a.date) || a.exercice.localeCompare(b.exercice, 'fr') || (b.serie ?? 0) - (a.serie ?? 0));
     $('#history-count').textContent = `${rows.length} série${rows.length > 1 ? 's' : ''}`;
     $('#history-table tbody').innerHTML = rows.length
-      ? rows.map((e) => `<tr class="${e.chauffe ? 'warm' : ''}">
-          <td>${fmtDate(e.date)}</td><td>${esc(e.exercice)}</td><td class="num">${fmtNum(e.serie)}</td>
-          <td class="num">${fmtNum(e.reps)}</td><td class="num">${fmtNum(e.charge_kg)}</td>
-          <td class="note">${esc(e.note)}</td><td><button class="del" data-del="${e.id}" aria-label="Supprimer">×</button></td></tr>`).join('')
+      ? rows.map((e) => setRowHtml(e)).join('')
       : '<tr><td colspan="7" class="empty">Aucune série</td></tr>';
+  }
+
+  function renderHistorySessions(rows) {
+    // Regroupement par (date, séance), plus récent en premier.
+    const groups = new Map();
+    for (const e of rows) {
+      const key = `${e.date}|${e.seance || ''}`;
+      if (!groups.has(key)) groups.set(key, { date: e.date, seance: e.seance || '', sets: [] });
+      groups.get(key).sets.push(e);
+    }
+    const sessions = [...groups.values()].sort((a, b) => b.date.localeCompare(a.date) || a.seance.localeCompare(b.seance, 'fr'));
+    $('#history-count').textContent = `${sessions.length} séance${sessions.length > 1 ? 's' : ''} · ${rows.length} série${rows.length > 1 ? 's' : ''}`;
+    const root = $('#history-sessions');
+    if (!sessions.length) { root.innerHTML = '<p class="empty">Aucune séance</p>'; return; }
+
+    root.innerHTML = sessions.map((s) => {
+      const key = `${s.date}|${s.seance}`;
+      // Exercices dans l'ordre de première apparition (ordre de la séance), séries par numéro.
+      const byEx = new Map();
+      for (const e of s.sets) {
+        const n = canon(e.exercice);
+        if (!byEx.has(n)) byEx.set(n, []);
+        byEx.get(n).push(e);
+      }
+      const work = s.sets.filter((e) => !e.chauffe);
+      const volume = work.reduce((sum, e) => sum + (Number(e.reps) || 0) * (Number(e.charge_kg) || 0), 0);
+      let progressions = 0;
+
+      const exHtml = [...byEx.entries()].map(([name, sets]) => {
+        sets.sort((a, b) => (a.serie ?? 0) - (b.serie ?? 0));
+        const cmp = loadVsPrevious(name, s.date);
+        const better = !!(cmp && cmp.better);
+        if (better) progressions += 1;
+        const badge = better ? `<span class="badge-progress" title="${cmp.counterweight ? 'Contrepoids' : 'Charge max'} ${fmtNum(cmp.top)} contre ${fmtNum(cmp.prev)} la fois précédente">Progression ${cmp.counterweight ? '−' : '+'}${fmtNum(cmp.delta)}</span>` : '';
+        const top = cmp ? `<span class="ex-top">${fmtNum(cmp.top)}${cmp.counterweight ? ' cp' : ' kg'}</span>` : '';
+        return `<tr class="ex-line"><td colspan="5"><span class="ex-name">${esc(name)}</span> <span class="muted">· ${sets.length} série${sets.length > 1 ? 's' : ''}</span> ${top}${badge}</td></tr>`
+          + sets.map((e) => setRowHtml(e, { withDate: false, withExercise: false })).join('');
+      }).join('');
+
+      const cardio = data.cardio.filter((c) => c.date === s.date);
+      const cardioHtml = cardio.map((c) => {
+        const meta = [
+          c.duree_min != null ? `${fmtNum(c.duree_min)} min` : null,
+          c.distance_km != null ? `${fmtNum(c.distance_km)} km` : null,
+          c.fc_moy != null ? `FC moy ${fmtNum(c.fc_moy)}` : null,
+        ].filter(Boolean).join(' · ');
+        return `<div class="session-cardio"><span class="k">${esc(c.type)}</span> ${esc(meta) || '—'}</div>`;
+      }).join('');
+
+      return `<details class="card session-card" data-key="${esc(key)}"${historyState.open.has(key) ? ' open' : ''}>
+        <summary>
+          <div class="session-sum">
+            <div class="session-sum-head"><span class="session-date">${fmtDate(s.date)}</span><span class="session-type">${esc(s.seance) || 'Séance'}</span>${progressions ? `<span class="badge-progress">${progressions} ↑</span>` : ''}</div>
+            <div class="session-sum-meta">${byEx.size} exercice${byEx.size > 1 ? 's' : ''} · ${s.sets.length} série${s.sets.length > 1 ? 's' : ''} · volume <b>${fmtNum(Math.round(volume))} kg</b></div>
+            ${cardioHtml}
+          </div>
+        </summary>
+        <div class="table-wrap"><table class="table session-table">
+          <thead><tr><th>Série</th><th>Reps</th><th>kg</th><th>Note</th><th></th></tr></thead>
+          <tbody>${exHtml}</tbody>
+        </table></div>
+      </details>`;
+    }).join('');
   }
 
   // ---------- Rendu : Progression ----------
@@ -448,7 +594,7 @@
     }).join('');
   }
 
-  function svgChart(points) {
+  function svgChart(points, { label = 'Évolution de la charge' } = {}) {
     const W = 340, H = 130, padL = 30, padR = 12, padT = 14, padB = 24;
     const vals = points.map((p) => p[1]);
     let min = Math.min(...vals), max = Math.max(...vals);
@@ -459,8 +605,10 @@
     const x = (i) => points.length === 1 ? (padL + (W - padL - padR) / 2) : padL + (i * (W - padL - padR)) / (points.length - 1);
     const y = (v) => padT + (H - padT - padB) * (1 - (v - min) / (max - min));
     const ticks = [min, (min + max) / 2, max];
-    let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Évolution de la charge">`;
-    for (const t of ticks) svg += `<line class="grid" x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"/><text x="${padL - 4}" y="${(y(t) + 3).toFixed(1)}" text-anchor="end">${Math.round(t)}</text>`;
+    // Graduations entières, sauf quand l'amplitude est faible (poids de corps) : une décimale.
+    const fmtTick = (t) => (max - min < 5 ? fmtNum(t.toFixed(1)) : String(Math.round(t)));
+    let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
+    for (const t of ticks) svg += `<line class="grid" x1="${padL}" x2="${W - padR}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"/><text x="${padL - 4}" y="${(y(t) + 3).toFixed(1)}" text-anchor="end">${fmtTick(t)}</text>`;
     const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p[1]).toFixed(1)}`).join(' ');
     svg += `<path class="line" d="${path}"/>`;
     const step = Math.ceil(points.length / 6);
@@ -468,7 +616,10 @@
       svg += `<circle class="dot" cx="${x(i).toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="3.5"/>`;
       if (i % step === 0 || i === points.length - 1) {
         svg += `<text x="${x(i).toFixed(1)}" y="${H - 6}" text-anchor="middle">${fmtDate(p[0]).slice(0, 5)}</text>`;
-        svg += `<text class="val" x="${x(i).toFixed(1)}" y="${(y(p[1]) - 7).toFixed(1)}">${fmtNum(p[1])}</text>`;
+        // Première et dernière étiquette ancrées vers l'intérieur pour ne pas chevaucher les graduations.
+        const anchor = points.length > 1 && i === 0 ? 'start' : (points.length > 1 && i === points.length - 1 ? 'end' : 'middle');
+        const dx = anchor === 'start' ? 4 : anchor === 'end' ? -4 : 0;
+        svg += `<text class="val" x="${(x(i) + dx).toFixed(1)}" y="${(y(p[1]) - 7).toFixed(1)}" text-anchor="${anchor}">${fmtNum(p[1])}</text>`;
       }
     });
     return svg + '</svg>';
@@ -500,13 +651,72 @@
       : '<p class="empty">Aucun gainage</p>';
   }
 
+  // ---------- Rendu : Profil ----------
+  function renderProfil() {
+    const p = data.profil;
+    const f = $('#profil-form');
+    f.taille_cm.value = p.taille_cm ?? '';
+    f.naissance.value = p.naissance || '';
+    f.fc_max.value = p.fc_max ?? '';
+    f.objectif.value = p.objectif || '';
+    const age = ageFrom(p.naissance);
+    $('#profil-age').textContent = age != null ? `${age} ans` : '';
+
+    const last = lastWeight();
+    const wf = $('#poids-form');
+    if (!wf.date.value) wf.date.value = todayISO();
+    if (!wf.poids_kg.value && last) wf.poids_kg.value = last.poids_kg;
+
+    // Tuiles dérivées
+    const tiles = [];
+    const imc = p.taille_cm && last ? last.poids_kg / Math.pow(p.taille_cm / 100, 2) : null;
+    tiles.push({
+      label: 'IMC',
+      value: imc != null ? imc.toFixed(1).replace('.', ',') : '—',
+      sub: imc != null ? `${fmtNum(last.poids_kg)} kg · ${fmtNum(p.taille_cm)} cm` : (last ? 'Renseigne ta taille' : 'Renseigne ton poids'),
+    });
+    const cw = currentCounterweight();
+    tiles.push({
+      label: 'À tirer en traction',
+      value: last && cw ? `${fmtNum(Math.round((last.poids_kg - cw.kg) * 10) / 10)} kg` : '—',
+      sub: cw ? `contrepoids ${fmtNum(cw.kg)} (${fmtDate(cw.date)})` : 'Pas encore de traction assistée',
+    });
+    const cp = lastChestPress();
+    tiles.push({
+      label: 'Chest press / poids',
+      value: last && cp ? `${(cp.kg / last.poids_kg).toFixed(2).replace('.', ',')} ×` : '—',
+      sub: cp ? `${fmtNum(cp.kg)} kg le ${fmtDate(cp.date)}` : 'Pas encore de chest press',
+    });
+    const zone = (lo, hi) => p.fc_max ? `${Math.round(p.fc_max * lo)}${hi ? `–${Math.round(p.fc_max * hi)}` : ''} bpm` : '—';
+    tiles.push({ label: 'Zone échauffement', value: p.fc_max ? `< ${Math.round(p.fc_max * 0.6)} bpm` : '—', sub: '< 60 % FC max' });
+    tiles.push({ label: 'Zone base', value: zone(0.65, 0.75), sub: '65–75 % FC max' });
+    tiles.push({ label: 'Zone intervalles', value: zone(0.8, 0.88), sub: '80–88 % FC max' });
+    $('#profil-tiles').innerHTML = tiles.map((t) => `<div class="tile"><span class="tile-label">${esc(t.label)}</span><span class="tile-value">${esc(t.value)}</span><span class="tile-sub">${esc(t.sub)}</span></div>`).join('');
+
+    // Poids de corps : graphique + liste
+    const sorted = [...data.poids].sort((a, b) => a.date.localeCompare(b.date));
+    const chart = $('#poids-chart');
+    if (sorted.length) {
+      const pts = sorted.map((w) => [w.date, Number(w.poids_kg)]);
+      const first = pts[0][1], lastV = pts[pts.length - 1][1];
+      const delta = Math.round((lastV - first) * 10) / 10;
+      chart.innerHTML = `<h3>Poids de corps<span>${fmtNum(lastV)} kg${delta ? ` <small class="muted">(${delta > 0 ? '+' : ''}${fmtNum(delta)})</small>` : ''}</span></h3>${svgChart(pts, { label: 'Évolution du poids de corps' })}`;
+      chart.hidden = false;
+    } else chart.hidden = true;
+    const list = [...sorted].reverse();
+    $('#poids-list').innerHTML = list.length ? list.map((w) => `<article class="card cardio-item"><span class="d">${fmtDate(w.date)}</span>
+        <div><div class="t">${fmtNum(w.poids_kg)} kg</div>${w.note ? `<div class="m">${esc(w.note)}</div>` : ''}</div>
+        <button class="btn icon ghost" data-del-poids="${w.id}" aria-label="Supprimer">×</button></article>`).join('')
+      : '<p class="empty">Aucune pesée</p>';
+  }
+
   // ---------- Rendu : Données ----------
   function renderData() {
-    $('#data-stats').textContent = `${data.muscu.length} séries · ${data.cardio.length} cardio · ${data.gainage.length} gainage — stockés dans ce navigateur.`;
+    $('#data-stats').textContent = `${data.muscu.length} séries · ${data.cardio.length} cardio · ${data.gainage.length} gainage · ${data.poids.length} pesée${data.poids.length > 1 ? 's' : ''} — stockés dans ce navigateur.`;
     $('#programme-rules').innerHTML = `<p class="muted" style="margin:0 0 6px">${esc(programme.nom)}</p><ul class="plain">${programme.progression.regles.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
   }
 
-  const render = { today: renderToday, history: renderHistory, progress: renderProgress, cardio: renderCardio, data: renderData };
+  const render = { today: renderToday, history: renderHistory, progress: renderProgress, cardio: renderCardio, profil: renderProfil, data: renderData };
 
   // ---------- Événements ----------
   function bindEvents() {
@@ -563,9 +773,60 @@
 
     $('#history-exercise').addEventListener('change', renderHistory);
     $('#history-date').addEventListener('change', renderHistory);
-    $('#history-table').addEventListener('click', (e) => {
+    $('#history-view').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-view]');
+      if (!b) return;
+      historyState.view = b.dataset.view;
+      try { sessionStorage.setItem(HISTORY_VIEW_KEY, historyState.view); } catch (_) { /* ignore */ }
+      renderHistory();
+    });
+    $('#screen-history').addEventListener('click', (e) => {
       const del = e.target.closest('[data-del]');
       if (del && confirm('Supprimer cette série ?')) { removeEntry('muscu', del.dataset.del); renderHistory(); }
+    });
+    // Mémorise les cartes dépliées pour les conserver après un re-rendu (suppression, filtre).
+    $('#history-sessions').addEventListener('toggle', (e) => {
+      const d = e.target;
+      if (!d.classList?.contains('session-card')) return;
+      if (d.open) historyState.open.add(d.dataset.key); else historyState.open.delete(d.dataset.key);
+    }, true);
+
+    $('#profil-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.target;
+      data.profil = normalizeProfil({
+        taille_cm: f.taille_cm.value,
+        naissance: f.naissance.value,
+        fc_max: f.fc_max.value,
+        objectif: f.objectif.value.trim(),
+      });
+      save();
+      renderProfil();
+      toast('Profil enregistré');
+    });
+    $('#btn-fcmax').addEventListener('click', () => {
+      const f = $('#profil-form');
+      const age = ageFrom(f.naissance.value);
+      if (age == null) { toast('Renseigne d\'abord ta date de naissance'); return; }
+      f.fc_max.value = 220 - age;
+      toast(`FC max estimée : 220 − ${age} = ${220 - age}`);
+    });
+    $('#poids-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const poids = toNum(f.poids_kg.value);
+      if (!f.date.value || poids == null || poids <= 0) { toast('Date et poids requis'); return; }
+      data.poids.push({ id: uid(), date: f.date.value, poids_kg: poids, note: f.note.value.trim() });
+      save();
+      f.note.value = '';
+      f.date.value = '';
+      f.poids_kg.value = '';
+      renderProfil();
+      toast('Pesée enregistrée');
+    });
+    $('#poids-list').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-del-poids]');
+      if (b && confirm('Supprimer cette pesée ?')) { removeEntry('poids', b.dataset.delPoids); renderProfil(); }
     });
 
     $('#cardio-form').addEventListener('submit', (e) => {
@@ -629,11 +890,13 @@
         if (!raw || !Array.isArray(raw.muscu)) throw new Error('format inattendu');
         const incoming = normalize(raw);
         if ($('#import-merge').checked) {
-          const key = (x) => JSON.stringify([x.date, x.exercice ?? x.type, x.serie ?? x.duree_min ?? x.valeur, x.reps, x.charge_kg]);
-          for (const k of ['muscu', 'cardio', 'gainage']) {
+          const key = (x) => JSON.stringify([x.date, x.exercice ?? x.type, x.serie ?? x.duree_min ?? x.valeur ?? x.poids_kg, x.reps, x.charge_kg]);
+          for (const k of ['muscu', 'cardio', 'gainage', 'poids']) {
             const have = new Set(data[k].map(key));
             for (const row of incoming[k]) if (!have.has(key(row))) data[k].push(row);
           }
+          // Profil : les champs renseignés dans le fichier complètent ou remplacent les champs locaux.
+          for (const [k, v] of Object.entries(incoming.profil)) if (v !== null && v !== '') data.profil[k] = v;
         } else {
           data = incoming;
         }

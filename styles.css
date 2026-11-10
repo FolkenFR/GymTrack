@@ -135,6 +135,37 @@ ul.plain li { margin: 2px 0; }
 .table td.num { text-align: right; }
 .table .del { background: none; border: none; color: var(--danger); cursor: pointer; padding: 2px 6px; }
 
+.between { justify-content: space-between; align-items: center; margin: 10px 0 4px; }
+.between #history-count { margin: 0; flex: 1; min-width: 0; text-align: right; font-size: .78rem; line-height: 1.25; }
+.segmented { display: inline-flex; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; }
+.segmented button {
+  background: none; border: none; border-radius: 8px; padding: 6px 10px; min-height: 32px;
+  color: var(--text-muted); font-size: .85rem; cursor: pointer; white-space: nowrap;
+}
+.segmented button.active { background: var(--bg-elev-2); color: var(--text); font-weight: 600; }
+.session-card { padding: 0; overflow: hidden; }
+.session-card summary { list-style: none; cursor: pointer; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; user-select: none; }
+.session-card summary::-webkit-details-marker { display: none; }
+.session-card summary::before { content: '▶'; font-size: .7rem; color: var(--accent); margin-top: 6px; transition: transform .2s; flex: none; }
+.session-card[open] summary::before { transform: rotate(90deg); }
+.session-card[open] summary { border-bottom: 1px solid var(--border); }
+.session-sum { flex: 1; min-width: 0; }
+.session-sum-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.session-date { font-weight: 600; }
+.session-type { color: var(--accent); font-weight: 600; }
+.session-sum-meta { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
+.session-sum-meta b { color: var(--text); font-weight: 600; }
+.session-cardio { font-size: .82rem; color: var(--text-muted); margin-top: 4px; }
+.session-cardio .k { color: var(--text); }
+.session-table th { background: var(--bg-elev); }
+.session-table .ex-line td { background: var(--bg-elev-2); white-space: normal; padding: 7px 10px; }
+.session-table .ex-name { font-weight: 600; }
+.session-table .ex-top { color: var(--accent); font-weight: 600; margin-left: 4px; }
+.badge-progress {
+  display: inline-block; background: var(--accent); color: var(--accent-ink); border-radius: 999px;
+  padding: 1px 8px; font-size: .72rem; font-weight: 700; margin-left: 6px; vertical-align: middle; white-space: nowrap;
+}
+
 /* Progression */
 .chart-card { padding: 12px 14px; }
 .chart-card h3 { display: flex; justify-content: space-between; }
@@ -144,7 +175,7 @@ ul.plain li { margin: 2px 0; }
 .chart .line { fill: none; stroke: var(--chart-line); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
 .chart .dot { fill: var(--chart-line); }
 .chart text { fill: var(--text-muted); font-size: 10px; }
-.chart .val { fill: var(--text); font-size: 10px; text-anchor: middle; }
+.chart .val { fill: var(--text); font-size: 10px; }
 
 /* Cardio */
 .cardio-item { display: grid; grid-template-columns: auto 1fr auto; gap: 8px 12px; align-items: start; padding: 10px 14px; }
@@ -153,16 +184,31 @@ ul.plain li { margin: 2px 0; }
 .cardio-item .m { font-size: .88rem; color: var(--text-muted); }
 .cardio-item .n { font-size: .85rem; grid-column: 2; }
 
+/* Profil */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.tile {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.tile-label { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.tile-value { font-size: 1.35rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile-sub { font-size: .75rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.field .age { font-style: normal; color: var(--accent); margin-left: 4px; }
+#btn-fcmax { width: 100%; white-space: nowrap; font-size: .9rem; padding: 6px 8px; }
+
 /* Tabbar */
 .tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
-  display: grid; grid-template-columns: repeat(5, 1fr);
+  display: grid; grid-template-columns: repeat(6, 1fr);
   background: var(--bg-elev); border-top: 1px solid var(--border);
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
 }
 .tabbar button {
   background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; font-size: .68rem; cursor: pointer;
+  gap: 3px; font-size: .68rem; cursor: pointer; padding: 0 2px; min-width: 0; white-space: nowrap;
+}
+@media (max-width: 400px) {
+  .tabbar button { font-size: .62rem; }
 }
 .tabbar button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar button.active { color: var(--accent); }

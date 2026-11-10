@@ -59,8 +59,15 @@
           <input type="date" id="history-date">
         </label>
       </div>
-      <p class="muted small" id="history-count"></p>
-      <div class="table-wrap">
+      <div class="row gap between">
+        <div class="segmented" id="history-view" role="group" aria-label="Affichage">
+          <button type="button" data-view="sessions" class="active">Par séance</button>
+          <button type="button" data-view="sets">Toutes les séries</button>
+        </div>
+        <p class="muted small" id="history-count"></p>
+      </div>
+      <div id="history-sessions"></div>
+      <div class="table-wrap" id="history-table-wrap">
         <table class="table" id="history-table">
           <thead>
             <tr><th>Date</th><th>Exercice</th><th>Série</th><th>Reps</th><th>kg</th><th>Note</th><th></th></tr>
@@ -122,11 +129,36 @@
       <div id="gainage-list"></div>
     </section>
 
+    <!-- Écran : Profil -->
+    <section id="screen-profil" class="screen" data-screen="profil" hidden>
+      <div id="profil-tiles" class="tiles"></div>
+
+      <form id="profil-form" class="card form-grid">
+        <h2>Fiche</h2>
+        <label class="field"><span>Taille (cm)</span><input type="number" name="taille_cm" min="100" max="250" step="1" inputmode="numeric" placeholder="178"></label>
+        <label class="field"><span>Date de naissance <em id="profil-age" class="age"></em></span><input type="date" name="naissance"></label>
+        <label class="field"><span>FC max estimée (bpm)</span><input type="number" name="fc_max" min="100" max="230" step="1" inputmode="numeric" placeholder="185"></label>
+        <div class="field"><span>&nbsp;</span><button type="button" class="btn" id="btn-fcmax" title="Formule 220 − âge">Estimer (220 − âge)</button></div>
+        <label class="field span2"><span>Objectif</span><input type="text" name="objectif" placeholder="Traction complète sans assistance…"></label>
+        <div class="span2 right"><button type="submit" class="btn primary">Enregistrer</button></div>
+      </form>
+
+      <h2 class="section-title">Poids de corps</h2>
+      <form id="poids-form" class="card form-grid">
+        <label class="field"><span>Date</span><input type="date" name="date" required></label>
+        <label class="field"><span>Poids (kg)</span><input type="number" name="poids_kg" min="20" max="300" step="0.1" inputmode="decimal" required></label>
+        <label class="field span2"><span>Note</span><input type="text" name="note" placeholder="à jeun, le matin…"></label>
+        <div class="span2 right"><button type="submit" class="btn primary">Enregistrer</button></div>
+      </form>
+      <article class="card chart-card" id="poids-chart" hidden></article>
+      <div id="poids-list"></div>
+    </section>
+
     <!-- Écran : Données -->
     <section id="screen-data" class="screen" data-screen="data" hidden>
       <div class="card">
         <h2>Export</h2>
-        <p class="muted small">Télécharge toutes les données (séries, cardio, gainage) au format du fichier <code>data/seed.json</code>. Tu peux le committer tel quel pour mettre à jour la base.</p>
+        <p class="muted small">Télécharge toutes les données (séries, cardio, gainage, profil, pesées) au format du fichier <code>data/seed.json</code>. Tu peux le committer tel quel pour mettre à jour la base.</p>
         <button id="btn-export" class="btn primary">Exporter en JSON</button>
       </div>
       <div class="card">
@@ -160,6 +192,9 @@
     </button>
     <button data-target="cardio" aria-label="Cardio">
       <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span>Cardio</span>
+    </button>
+    <button data-target="profil" aria-label="Profil">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg><span>Profil</span>
     </button>
     <button data-target="data" aria-label="Données">
       <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Données</span>
