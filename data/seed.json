@@ -1,12 +1,6 @@
 {
  "version": 2,
- "exported_at": "2026-11-09T06:30:54Z",
- "profil": {
-  "taille_cm": null,
-  "naissance": "",
-  "fc_max": 185,
-  "objectif": "Traction complète sans assistance ; hauteur de pied en ura mawashi"
- },
+ "exported_at": "2026-11-10T17:52:45Z",
  "muscu": [
   {
    "date": "2026-09-30",
@@ -1687,6 +1681,346 @@
    "charge_kg": 10,
    "chauffe": false,
    "note": "technique à valider"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 0,
+   "chauffe": true,
+   "note": "chauffe à vide"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 4,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 5,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hack squat",
+   "serie": 6,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté ; passer à 30"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Soulevé de terre roumain",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 20,
+   "chauffe": false,
+   "note": "barre vide"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Soulevé de terre roumain",
+   "serie": 2,
+   "reps": 10,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Soulevé de terre roumain",
+   "serie": 3,
+   "reps": 10,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "15 par côté ; prise qui lâche"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Soulevé de terre roumain",
+   "serie": 4,
+   "reps": 10,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "15 par côté"
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hip thrust",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hip thrust",
+   "serie": 2,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Hip thrust",
+   "serie": 3,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Leg curl",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Leg curl",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-09",
+   "seance": "Jambes",
+   "exercice": "Leg curl",
+   "serie": 3,
+   "reps": 12,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 20,
+   "chauffe": true,
+   "note": "chauffe 10 par côté"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 4,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 5,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté ; dernière rep dure à gauche"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 10,
+   "chauffe": true,
+   "note": "chauffe"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 2,
+   "reps": 10,
+   "charge_kg": 25,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 3,
+   "reps": 10,
+   "charge_kg": 25,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 4,
+   "reps": 10,
+   "charge_kg": 25,
+   "chauffe": false,
+   "note": "dur sur la fin"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 1,
+   "reps": 8,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 27,
+   "chauffe": false,
+   "note": "contrepoids ; dernière rep dure"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 8,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 8,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 3,
+   "reps": 12,
+   "charge_kg": 8,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-10",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 3,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
   }
  ],
  "cardio": [
@@ -1783,6 +2117,12 @@
    "note": ""
   }
  ],
+ "profil": {
+  "taille_cm": null,
+  "naissance": "",
+  "fc_max": 185,
+  "objectif": "Traction complète sans assistance ; hauteur de pied en ura mawashi"
+ },
  "poids": [
   {
    "date": "2026-09-22",
