@@ -24,6 +24,7 @@ BASE = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercise
 MAPPING = {
     "hack-squat": "Hack_Squat",
     "souleve-de-terre-roumain": "Romanian_Deadlift",
+    "presse-45": "Leg_Press",
     "hip-thrust": "Barbell_Hip_Thrust",
     "leg-curl-assis": "Seated_Leg_Curl",
     "chest-press-incline": "Leverage_Incline_Chest_Press",

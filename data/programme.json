@@ -1,315 +1,319 @@
 {
- "version": 1,
- "nom": "Programme novembre 2026",
- "progression": {
-  "regles": [
-   "+5 kg sur les machines à charge guidée",
-   "+2,5 kg par côté sur les disques et les barres",
-   "−5 de contrepoids sur traction et dips assistés",
-   "On augmente seulement quand toutes les séries sont propres",
-   "Le côté le plus faible (bras gauche) fixe la charge"
-  ]
- },
- "fin_de_seance": {
-  "muscu": [
-   "Tapis 15-20 min tranquille",
-   "Gainage (voir liste du jour)",
-   "9 étirements"
+  "version": 1,
+  "nom": "Programme novembre 2026",
+  "progression": {
+    "regles": [
+      "+5 kg sur les machines à charge guidée",
+      "+2,5 kg par côté sur les disques et les barres",
+      "−5 de contrepoids sur traction et dips assistés",
+      "On augmente seulement quand toutes les séries sont propres",
+      "Le côté le plus faible (bras gauche) fixe la charge"
+    ]
+  },
+  "fin_de_seance": {
+    "muscu": [
+      "Tapis 15-20 min tranquille",
+      "Gainage (voir liste du jour)",
+      "9 étirements"
+    ],
+    "cardio": [
+      "Gainage (voir liste du jour)",
+      "9 étirements"
+    ]
+  },
+  "par_jour": {
+    "1": "jambes",
+    "2": "poussee",
+    "3": "cardio",
+    "4": "tirage",
+    "5": "cardio2",
+    "6": null,
+    "0": null
+  },
+  "seances": [
+    {
+      "id": "jambes",
+      "jour": "Lundi",
+      "nom": "Jambes et fessiers",
+      "type": "muscu",
+      "seance_csv": "Jambes",
+      "exercices": [
+        {
+          "nom": "Hack squat",
+          "series": 4,
+          "reps": 8,
+          "charge_kg": 60,
+          "detail": "30 kg/côté (disques), 4 séries maximum",
+          "repos_s": 90,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/hack-squat.gif"
+        },
+        {
+          "nom": "Presse 45° pieds hauts",
+          "series": 3,
+          "reps": 10,
+          "charge_kg": 80,
+          "detail": "40 kg/côté à tester (20/côté en chauffe), pieds en haut de la plateforme",
+          "repos_s": 60,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/presse-45.gif",
+          "alias": [
+            "Soulevé de terre roumain",
+            "Presse 45°"
+          ]
+        },
+        {
+          "nom": "Hip thrust",
+          "series": 3,
+          "reps": 10,
+          "charge_kg": 40,
+          "detail": "40 kg",
+          "repos_s": 60,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/hip-thrust.gif"
+        },
+        {
+          "nom": "Leg curl assis",
+          "series": 3,
+          "reps": 12,
+          "charge_kg": 35,
+          "detail": "machine guidée, 35 kg",
+          "repos_s": 60,
+          "progression": "+5 kg",
+          "alias": [
+            "Leg curl"
+          ],
+          "gif": "assets/gifs/leg-curl-assis.gif"
+        }
+      ],
+      "gainage": [
+        {
+          "nom": "Planche 2×60 s",
+          "gif": "assets/gifs/planche.gif"
+        },
+        {
+          "nom": "Dead bug 2×10/côté",
+          "gif": "assets/gifs/dead-bug.gif"
+        },
+        {
+          "nom": "Superman 2×12",
+          "gif": "assets/gifs/superman.gif"
+        }
+      ]
+    },
+    {
+      "id": "poussee",
+      "jour": "Mardi",
+      "nom": "Poussée",
+      "type": "muscu",
+      "seance_csv": "Poussée",
+      "exercices": [
+        {
+          "nom": "Chest press incliné",
+          "series": 4,
+          "reps": 8,
+          "charge_kg": 45,
+          "detail": "22,5 kg/côté = 45 kg",
+          "repos_s": 90,
+          "progression": "+2,5 kg/côté",
+          "alias": [
+            "Chest press"
+          ],
+          "gif": "assets/gifs/chest-press-incline.gif"
+        },
+        {
+          "nom": "Shoulder press",
+          "series": 3,
+          "reps": 10,
+          "charge_kg": 25,
+          "detail": "25 kg total",
+          "repos_s": 60,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/shoulder-press.gif"
+        },
+        {
+          "nom": "Dips assistés",
+          "series": 3,
+          "reps": 8,
+          "charge_kg": 28,
+          "detail": "contrepoids 28",
+          "repos_s": 60,
+          "progression": "−5 contrepoids",
+          "contrepoids": true,
+          "gif": "assets/gifs/dips-assistes.gif"
+        },
+        {
+          "nom": "Écartés haltères inclinés",
+          "series": 3,
+          "reps": 12,
+          "charge_kg": 8,
+          "detail": "8 kg/main",
+          "repos_s": 60,
+          "progression": "+2 kg/main",
+          "gif": "assets/gifs/ecartes-halteres-inclines.gif"
+        },
+        {
+          "nom": "Élévations latérales",
+          "series": 3,
+          "reps": 12,
+          "charge_kg": 6,
+          "detail": "6 kg/main",
+          "repos_s": 60,
+          "progression": "+1 kg/main",
+          "gif": "assets/gifs/elevations-laterales.gif"
+        }
+      ],
+      "gainage": [
+        {
+          "nom": "Planche latérale 2×30 s/côté",
+          "gif": "assets/gifs/planche.gif"
+        },
+        {
+          "nom": "Pompes 2×10-12",
+          "gif": "assets/gifs/pompes.gif"
+        },
+        {
+          "nom": "Dead bug 2×10/côté",
+          "gif": "assets/gifs/dead-bug.gif"
+        }
+      ]
+    },
+    {
+      "id": "cardio",
+      "jour": "Mercredi",
+      "nom": "Cardio",
+      "type": "cardio",
+      "blocs": [
+        "20 min base à 5,5 km/h, pente 5 → 10 %",
+        "4 × (3 min pente 14 % / 2 min pente 6 %)",
+        "Retour au calme 4 min"
+      ],
+      "gainage": [
+        {
+          "nom": "Planche 2×60 s",
+          "gif": "assets/gifs/planche.gif"
+        }
+      ]
+    },
+    {
+      "id": "tirage",
+      "jour": "Jeudi",
+      "nom": "Tirage",
+      "type": "muscu",
+      "seance_csv": "Tirage",
+      "exercices": [
+        {
+          "nom": "Traction assistée",
+          "series": 4,
+          "reps": 8,
+          "charge_kg": 42,
+          "detail": "contrepoids 42",
+          "repos_s": 90,
+          "progression": "−5 contrepoids",
+          "contrepoids": true,
+          "gif": "assets/gifs/traction-assistee.gif"
+        },
+        {
+          "nom": "Low row",
+          "series": 3,
+          "reps": 10,
+          "charge_kg": 35,
+          "detail": "17,5 kg/côté = 35 kg",
+          "repos_s": 60,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/low-row.gif"
+        },
+        {
+          "nom": "Rowing assis poulie",
+          "series": 3,
+          "reps": 10,
+          "charge_kg": 35,
+          "detail": "poulie, 35 kg",
+          "repos_s": 60,
+          "progression": "+5 kg",
+          "alias": [
+            "Rowing assis"
+          ],
+          "gif": "assets/gifs/rowing-assis-poulie.gif"
+        },
+        {
+          "nom": "Curl pupitre EZ",
+          "series": 3,
+          "reps": 12,
+          "charge_kg": 10,
+          "detail": "barre EZ + 5 kg/côté",
+          "repos_s": 60,
+          "progression": "+2,5 kg/côté",
+          "gif": "assets/gifs/curl-pupitre-ez.gif"
+        },
+        {
+          "nom": "Face pull",
+          "series": 3,
+          "reps": 15,
+          "charge_kg": 10,
+          "detail": "poulie, 10 kg",
+          "repos_s": 60,
+          "progression": "+5 kg",
+          "gif": "assets/gifs/face-pull.gif"
+        }
+      ],
+      "gainage": [
+        {
+          "nom": "Planche 2×60 s",
+          "gif": "assets/gifs/planche.gif"
+        },
+        {
+          "nom": "Planche latérale 2×30 s/côté",
+          "gif": "assets/gifs/planche.gif"
+        },
+        {
+          "nom": "Superman 2×12",
+          "gif": "assets/gifs/superman.gif"
+        }
+      ]
+    },
+    {
+      "id": "cardio2",
+      "jour": "Vendredi",
+      "nom": "Cardio ou repos",
+      "type": "cardio",
+      "blocs": [
+        "20 min base à 5,5 km/h, pente 5 → 10 %",
+        "4 × (3 min pente 14 % / 2 min pente 6 %)",
+        "Retour au calme 4 min"
+      ],
+      "gainage": [
+        {
+          "nom": "Planche 2×60 s",
+          "gif": "assets/gifs/planche.gif"
+        },
+        {
+          "nom": "Pompes 2×10-12",
+          "gif": "assets/gifs/pompes.gif"
+        }
+      ]
+    }
   ],
-  "cardio": [
-   "Gainage (voir liste du jour)",
-   "9 étirements"
+  "gainage_exercices": [
+    {
+      "nom": "Planche",
+      "gif": "assets/gifs/planche.gif"
+    },
+    {
+      "nom": "Dead bug",
+      "gif": "assets/gifs/dead-bug.gif"
+    },
+    {
+      "nom": "Planche latérale",
+      "gif": "assets/gifs/planche-laterale.gif"
+    },
+    {
+      "nom": "Superman",
+      "gif": "assets/gifs/superman.gif"
+    },
+    {
+      "nom": "Pompes",
+      "gif": "assets/gifs/pompes.gif"
+    }
   ]
- },
- "par_jour": {
-  "1": "jambes",
-  "2": "poussee",
-  "3": "cardio",
-  "4": "tirage",
-  "5": "cardio2",
-  "6": null,
-  "0": null
- },
- "seances": [
-  {
-   "id": "jambes",
-   "jour": "Lundi",
-   "nom": "Jambes et fessiers",
-   "type": "muscu",
-   "seance_csv": "Jambes",
-   "exercices": [
-    {
-     "nom": "Hack squat",
-     "series": 4,
-     "reps": 8,
-     "charge_kg": 50,
-     "detail": "25 kg/côté (disques)",
-     "repos_s": 90,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/hack-squat.gif"
-    },
-    {
-     "nom": "Soulevé de terre roumain",
-     "series": 3,
-     "reps": 10,
-     "charge_kg": 45,
-     "detail": "barre, 45 kg total",
-     "repos_s": 60,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/souleve-de-terre-roumain.gif"
-    },
-    {
-     "nom": "Hip thrust",
-     "series": 3,
-     "reps": 10,
-     "charge_kg": 40,
-     "detail": "40 kg",
-     "repos_s": 60,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/hip-thrust.gif"
-    },
-    {
-     "nom": "Leg curl assis",
-     "series": 3,
-     "reps": 12,
-     "charge_kg": 35,
-     "detail": "machine guidée, 35 kg",
-     "repos_s": 60,
-     "progression": "+5 kg",
-     "alias": [
-      "Leg curl"
-     ],
-     "gif": "assets/gifs/leg-curl-assis.gif"
-    }
-   ],
-   "gainage": [
-    {
-     "nom": "Planche 2×60 s",
-     "gif": "assets/gifs/planche.gif"
-    },
-    {
-     "nom": "Dead bug 2×10/côté",
-     "gif": "assets/gifs/dead-bug.gif"
-    },
-    {
-     "nom": "Superman 2×12",
-     "gif": "assets/gifs/superman.gif"
-    }
-   ]
-  },
-  {
-   "id": "poussee",
-   "jour": "Mardi",
-   "nom": "Poussée",
-   "type": "muscu",
-   "seance_csv": "Poussée",
-   "exercices": [
-    {
-     "nom": "Chest press incliné",
-     "series": 4,
-     "reps": 8,
-     "charge_kg": 40,
-     "detail": "20 kg/côté = 40 kg",
-     "repos_s": 90,
-     "progression": "+2,5 kg/côté",
-     "alias": [
-      "Chest press"
-     ],
-     "gif": "assets/gifs/chest-press-incline.gif"
-    },
-    {
-     "nom": "Shoulder press",
-     "series": 3,
-     "reps": 10,
-     "charge_kg": 25,
-     "detail": "25 kg total",
-     "repos_s": 60,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/shoulder-press.gif"
-    },
-    {
-     "nom": "Dips assistés",
-     "series": 3,
-     "reps": 8,
-     "charge_kg": 35,
-     "detail": "contrepoids 35",
-     "repos_s": 60,
-     "progression": "−5 contrepoids",
-     "contrepoids": true,
-     "gif": "assets/gifs/dips-assistes.gif"
-    },
-    {
-     "nom": "Écartés haltères inclinés",
-     "series": 3,
-     "reps": 12,
-     "charge_kg": 8,
-     "detail": "8 kg/main",
-     "repos_s": 60,
-     "progression": "+2 kg/main",
-     "gif": "assets/gifs/ecartes-halteres-inclines.gif"
-    },
-    {
-     "nom": "Élévations latérales",
-     "series": 3,
-     "reps": 12,
-     "charge_kg": 6,
-     "detail": "6 kg/main",
-     "repos_s": 60,
-     "progression": "+1 kg/main",
-     "gif": "assets/gifs/elevations-laterales.gif"
-    }
-   ],
-   "gainage": [
-    {
-     "nom": "Planche latérale 2×30 s/côté",
-     "gif": "assets/gifs/planche.gif"
-    },
-    {
-     "nom": "Pompes 2×10-12",
-     "gif": "assets/gifs/pompes.gif"
-    },
-    {
-     "nom": "Dead bug 2×10/côté",
-     "gif": "assets/gifs/dead-bug.gif"
-    }
-   ]
-  },
-  {
-   "id": "cardio",
-   "jour": "Mercredi",
-   "nom": "Cardio",
-   "type": "cardio",
-   "blocs": [
-    "20 min base à 5,5 km/h, pente 5 → 10 %",
-    "4 × (3 min pente 14 % / 2 min pente 6 %)",
-    "Retour au calme 4 min"
-   ],
-   "gainage": [
-    {
-     "nom": "Planche 2×60 s",
-     "gif": "assets/gifs/planche.gif"
-    }
-   ]
-  },
-  {
-   "id": "tirage",
-   "jour": "Jeudi",
-   "nom": "Tirage",
-   "type": "muscu",
-   "seance_csv": "Tirage",
-   "exercices": [
-    {
-     "nom": "Traction assistée",
-     "series": 4,
-     "reps": 8,
-     "charge_kg": 42,
-     "detail": "contrepoids 42",
-     "repos_s": 90,
-     "progression": "−5 contrepoids",
-     "contrepoids": true,
-     "gif": "assets/gifs/traction-assistee.gif"
-    },
-    {
-     "nom": "Low row",
-     "series": 3,
-     "reps": 10,
-     "charge_kg": 35,
-     "detail": "17,5 kg/côté = 35 kg",
-     "repos_s": 60,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/low-row.gif"
-    },
-    {
-     "nom": "Rowing assis poulie",
-     "series": 3,
-     "reps": 10,
-     "charge_kg": 35,
-     "detail": "poulie, 35 kg",
-     "repos_s": 60,
-     "progression": "+5 kg",
-     "alias": [
-      "Rowing assis"
-     ],
-     "gif": "assets/gifs/rowing-assis-poulie.gif"
-    },
-    {
-     "nom": "Curl pupitre EZ",
-     "series": 3,
-     "reps": 12,
-     "charge_kg": 10,
-     "detail": "barre EZ + 5 kg/côté",
-     "repos_s": 60,
-     "progression": "+2,5 kg/côté",
-     "gif": "assets/gifs/curl-pupitre-ez.gif"
-    },
-    {
-     "nom": "Face pull",
-     "series": 3,
-     "reps": 15,
-     "charge_kg": 10,
-     "detail": "poulie, 10 kg",
-     "repos_s": 60,
-     "progression": "+5 kg",
-     "gif": "assets/gifs/face-pull.gif"
-    }
-   ],
-   "gainage": [
-    {
-     "nom": "Planche 2×60 s",
-     "gif": "assets/gifs/planche.gif"
-    },
-    {
-     "nom": "Planche latérale 2×30 s/côté",
-     "gif": "assets/gifs/planche.gif"
-    },
-    {
-     "nom": "Superman 2×12",
-     "gif": "assets/gifs/superman.gif"
-    }
-   ]
-  },
-  {
-   "id": "cardio2",
-   "jour": "Vendredi",
-   "nom": "Cardio ou repos",
-   "type": "cardio",
-   "blocs": [
-    "20 min base à 5,5 km/h, pente 5 → 10 %",
-    "4 × (3 min pente 14 % / 2 min pente 6 %)",
-    "Retour au calme 4 min"
-   ],
-   "gainage": [
-    {
-     "nom": "Planche 2×60 s",
-     "gif": "assets/gifs/planche.gif"
-    },
-    {
-     "nom": "Pompes 2×10-12",
-     "gif": "assets/gifs/pompes.gif"
-    }
-   ]
-  }
- ],
- "gainage_exercices": [
-  {
-   "nom": "Planche",
-   "gif": "assets/gifs/planche.gif"
-  },
-  {
-   "nom": "Dead bug",
-   "gif": "assets/gifs/dead-bug.gif"
-  },
-  {
-   "nom": "Planche latérale",
-   "gif": "assets/gifs/planche-laterale.gif"
-  },
-  {
-   "nom": "Superman",
-   "gif": "assets/gifs/superman.gif"
-  },
-  {
-   "nom": "Pompes",
-   "gif": "assets/gifs/pompes.gif"
-  }
- ]
 }
