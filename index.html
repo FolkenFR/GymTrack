@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111418">
+  <meta name="description" content="Suivi personnel de musculation, cardio et gainage.">
+  <title>GymTrack</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Gym<span>Track</span></h1>
+    <button id="chrono" class="chrono" hidden title="Chrono de séance — appuyer pour arrêter" aria-live="off">00:00</button>
+    <span id="today-label" class="topbar-date"></span>
+  </header>
+
+  <!-- Timer de repos (barre collante en haut) -->
+  <div id="rest-timer" class="rest-timer" hidden role="timer" aria-live="polite">
+    <div class="rest-inner">
+      <div class="rest-text"><span class="rest-label">Repos</span><span class="rest-sub" id="rest-sub"></span></div>
+      <span class="rest-time" id="rest-time">60</span>
+      <div class="rest-actions">
+        <button class="btn small" id="rest-plus" type="button">+30 s</button>
+        <button class="btn small" id="rest-stop" type="button">Passer</button>
+      </div>
+    </div>
+    <div class="rest-bar"><div class="rest-fill" id="rest-fill"></div></div>
+  </div>
+
+  <main id="app">
+    <!-- Écran : Aujourd'hui -->
+    <section id="screen-today" class="screen" data-screen="today">
+      <div class="row gap">
+        <label class="field grow">
+          <span>Séance</span>
+          <select id="session-select"></select>
+        </label>
+        <label class="field">
+          <span>Date</span>
+          <input type="date" id="session-date">
+        </label>
+      </div>
+      <div id="today-content"></div>
+    </section>
+
+    <!-- Écran : Historique -->
+    <section id="screen-history" class="screen" data-screen="history" hidden>
+      <div class="row gap">
+        <label class="field grow">
+          <span>Exercice</span>
+          <select id="history-exercise"><option value="">Tous</option></select>
+        </label>
+        <label class="field">
+          <span>Date</span>
+          <input type="date" id="history-date">
+        </label>
+      </div>
+      <p class="muted small" id="history-count"></p>
+      <div class="table-wrap">
+        <table class="table" id="history-table">
+          <thead>
+            <tr><th>Date</th><th>Exercice</th><th>Série</th><th>Reps</th><th>kg</th><th>Note</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Écran : Progression -->
+    <section id="screen-progress" class="screen" data-screen="progress" hidden>
+      <p class="muted small">Charge maximale (hors échauffement) par séance, pour chaque exercice.</p>
+      <div id="progress-charts"></div>
+    </section>
+
+    <!-- Écran : Cardio -->
+    <section id="screen-cardio" class="screen" data-screen="cardio" hidden>
+      <form id="cardio-form" class="card form-grid">
+        <h2>Nouvelle séance cardio</h2>
+        <label class="field"><span>Date</span><input type="date" name="date" required></label>
+        <label class="field"><span>Type</span>
+          <select name="type">
+            <option>Intervalles</option>
+            <option>Cardio</option>
+            <option>Échauffement</option>
+            <option>Retour au calme</option>
+          </select>
+        </label>
+        <label class="field"><span>Durée (min)</span><input type="number" name="duree_min" step="0.1" inputmode="decimal"></label>
+        <label class="field"><span>Distance (km)</span><input type="number" name="distance_km" step="0.01" inputmode="decimal"></label>
+        <label class="field"><span>FC moy</span><input type="number" name="fc_moy" inputmode="numeric"></label>
+        <label class="field"><span>FC max</span><input type="number" name="fc_max" inputmode="numeric"></label>
+        <label class="field"><span>Pente moy (%)</span><input type="number" name="pente_moy_pct" step="0.1" inputmode="decimal"></label>
+        <label class="field span2"><span>Note</span><input type="text" name="note" placeholder="4 blocs à 14 %…"></label>
+        <div class="span2 right"><button type="submit" class="btn primary">Enregistrer</button></div>
+      </form>
+
+      <h2 class="section-title">Séances cardio</h2>
+      <div id="cardio-list"></div>
+
+      <h2 class="section-title">Gainage</h2>
+      <form id="gainage-form" class="card form-grid">
+        <label class="field"><span>Date</span><input type="date" name="date" required></label>
+        <label class="field"><span>Exercice</span>
+          <input type="text" name="exercice" list="gainage-names" placeholder="Planche" required>
+          <datalist id="gainage-names">
+            <option>Planche</option><option>Planche latérale</option><option>Dead bug</option>
+            <option>Superman</option><option>Pompes</option>
+          </datalist>
+        </label>
+        <label class="field"><span>Séries</span><input type="number" name="series" inputmode="numeric" value="2"></label>
+        <label class="field"><span>Valeur</span><input type="text" name="valeur" placeholder="60 ou 60-60-45" required></label>
+        <label class="field"><span>Unité</span>
+          <select name="unite"><option>s</option><option>s par côté</option><option>reps</option><option>reps par côté</option></select>
+        </label>
+        <label class="field"><span>Note</span><input type="text" name="note"></label>
+        <div class="span2 right"><button type="submit" class="btn primary">Enregistrer</button></div>
+      </form>
+      <div id="gainage-list"></div>
+    </section>
+
+    <!-- Écran : Données -->
+    <section id="screen-data" class="screen" data-screen="data" hidden>
+      <div class="card">
+        <h2>Export</h2>
+        <p class="muted small">Télécharge toutes les données (séries, cardio, gainage) au format du fichier <code>data/seed.json</code>. Tu peux le committer tel quel pour mettre à jour la base.</p>
+        <button id="btn-export" class="btn primary">Exporter en JSON</button>
+      </div>
+      <div class="card">
+        <h2>Import</h2>
+        <p class="muted small">Remplace les données locales par le contenu d'un fichier JSON exporté.</p>
+        <label class="btn file-btn">Choisir un fichier…<input type="file" id="input-import" accept="application/json,.json" hidden></label>
+        <label class="check"><input type="checkbox" id="import-merge"> Fusionner avec les données existantes (au lieu de remplacer)</label>
+      </div>
+      <div class="card">
+        <h2>Réinitialiser</h2>
+        <p class="muted small">Efface les données locales et recharge <code>data/seed.json</code>.</p>
+        <button id="btn-reset" class="btn danger">Revenir au seed</button>
+      </div>
+      <div class="card">
+        <h2>Programme</h2>
+        <div id="programme-rules" class="small"></div>
+      </div>
+      <p class="muted small" id="data-stats"></p>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-target="today" class="active" aria-label="Aujourd'hui">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM4 7l2-3h12l2 3M9 12h6"/></svg><span>Aujourd'hui</span>
+    </button>
+    <button data-target="history" aria-label="Historique">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Historique</span>
+    </button>
+    <button data-target="progress" aria-label="Progression">
+      <svg viewBox="0 0 24 24"><path d="M4 18L10 11l4 4 6-8"/></svg><span>Progression</span>
+    </button>
+    <button data-target="cardio" aria-label="Cardio">
+      <svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span>Cardio</span>
+    </button>
+    <button data-target="data" aria-label="Données">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Données</span>
+    </button>
+  </nav>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

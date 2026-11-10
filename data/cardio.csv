@@ -1,0 +1,6 @@
+date,type,duree_min,distance_km,fc_moy,fc_max,pente_moy_pct,note
+2026-09-30,Cardio,32.8,2.67,128,145,,marche inclinée
+2026-10-19,Échauffement,10,0.88,,,,avant jambes
+2026-10-21,Échauffement,10,0.77,,,,avant poussée
+2026-10-22,Intervalles,47.6,4.26,133,182,10.1,4 blocs à 14 % ; max 182 probablement capteur
+2026-11-06,Intervalles,47.2,4.25,144,172,10.1,4 blocs à 15 % ; 17 % du temps au-dessus de 160 ; après 3 jours de muscu

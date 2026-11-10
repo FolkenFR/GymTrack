@@ -1,0 +1,169 @@
+date,seance,exercice,serie,reps,charge_kg,note
+2026-09-30,Mixte,Presse à cuisses,1,10,80,
+2026-09-30,Mixte,Presse à cuisses,2,10,80,
+2026-09-30,Mixte,Presse à cuisses,3,10,90,
+2026-09-30,Mixte,Presse à cuisses,4,10,90,
+2026-09-30,Mixte,Tirage vertical,1,12,30,
+2026-09-30,Mixte,Tirage vertical,2,12,35,
+2026-09-30,Mixte,Tirage vertical,3,12,35,
+2026-10-06,Jambes,Presse à cuisses,1,12,50,chauffe
+2026-10-06,Jambes,Presse à cuisses,2,12,90,
+2026-10-06,Jambes,Presse à cuisses,3,12,90,
+2026-10-06,Jambes,Presse à cuisses,4,12,100,
+2026-10-06,Jambes,Leg extension,1,12,15,chauffe
+2026-10-06,Jambes,Leg extension,2,12,25,
+2026-10-06,Jambes,Leg extension,3,12,25,
+2026-10-06,Jambes,Leg extension,4,12,30,
+2026-10-06,Jambes,Leg curl,1,12,15,chauffe
+2026-10-06,Jambes,Leg curl,2,12,25,
+2026-10-06,Jambes,Leg curl,3,12,25,
+2026-10-06,Jambes,Leg curl,4,12,30,
+2026-10-07,Poussée,Chest press,1,10,30,35 impossible à gauche
+2026-10-07,Poussée,Chest press,2,10,30,
+2026-10-07,Poussée,Chest press,3,10,30,
+2026-10-07,Poussée,Shoulder press,1,12,20,
+2026-10-07,Poussée,Shoulder press,2,12,25,
+2026-10-07,Poussée,Shoulder press,3,9,30,
+2026-10-07,Poussée,Élévations latérales,1,15,4,par main
+2026-10-07,Poussée,Élévations latérales,2,15,4,par main
+2026-10-07,Poussée,Élévations latérales,3,15,4,par main
+2026-10-07,Poussée,Pec deck,1,12,20,
+2026-10-07,Poussée,Pec deck,2,12,25,
+2026-10-07,Poussée,Pec deck,3,12,25,
+2026-10-15,Tirage,Tirage vertical,1,15,15,chauffe
+2026-10-15,Tirage,Tirage vertical,2,10,35,
+2026-10-15,Tirage,Tirage vertical,3,10,40,
+2026-10-15,Tirage,Tirage vertical,4,5,40,
+2026-10-15,Tirage,Tirage vertical,5,5,35,
+2026-10-15,Tirage,Rowing assis,1,12,15,chauffe
+2026-10-15,Tirage,Rowing assis,2,10,35,
+2026-10-15,Tirage,Rowing assis,3,10,35,
+2026-10-15,Tirage,Rowing assis,4,10,35,
+2026-10-15,Tirage,Curl haltères,1,12,8,par main ; droit facile gauche juste
+2026-10-15,Tirage,Curl haltères,2,12,8,par main
+2026-10-15,Tirage,Curl haltères,3,12,8,par main
+2026-10-19,Jambes,Presse à cuisses,1,12,50,chauffe
+2026-10-19,Jambes,Presse à cuisses,2,12,110,
+2026-10-19,Jambes,Presse à cuisses,3,12,100,
+2026-10-19,Jambes,Presse à cuisses,4,12,100,
+2026-10-19,Jambes,Leg extension,1,12,30,
+2026-10-19,Jambes,Leg extension,2,12,30,
+2026-10-19,Jambes,Leg extension,3,12,30,
+2026-10-19,Jambes,Leg extension,4,12,30,
+2026-10-19,Jambes,Leg curl,1,12,15,chauffe
+2026-10-19,Jambes,Leg curl,2,12,30,
+2026-10-19,Jambes,Leg curl,3,12,35,
+2026-10-19,Jambes,Leg curl,4,12,35,
+2026-10-21,Poussée,Chest press,1,10,20,chauffe
+2026-10-21,Poussée,Chest press,2,10,30,
+2026-10-21,Poussée,Chest press,3,10,30,
+2026-10-21,Poussée,Chest press,4,10,35,record
+2026-10-21,Poussée,Shoulder press,1,10,15,chauffe
+2026-10-21,Poussée,Shoulder press,2,10,25,
+2026-10-21,Poussée,Shoulder press,3,10,25,
+2026-10-21,Poussée,Shoulder press,4,8,25,2 dernières manquées
+2026-10-21,Poussée,Élévations latérales,1,15,4,par main
+2026-10-21,Poussée,Élévations latérales,2,15,4,par main
+2026-10-21,Poussée,Élévations latérales,3,15,4,par main
+2026-10-21,Poussée,Pec deck,1,10,15,
+2026-10-21,Poussée,Pec deck,2,10,15,
+2026-10-21,Poussée,Pec deck,3,10,10,
+2026-10-23,Tirage,Tirage vertical,1,10,40,
+2026-10-23,Tirage,Tirage vertical,2,10,40,
+2026-10-23,Tirage,Tirage vertical,3,10,40,dernière pas tout à fait propre
+2026-10-23,Tirage,Rowing assis,1,10,35,dur à finir
+2026-10-23,Tirage,Rowing assis,2,10,35,
+2026-10-23,Tirage,Rowing assis,3,10,35,
+2026-10-23,Tirage,Curl haltères,1,12,8,par main
+2026-10-23,Tirage,Curl haltères,2,12,8,par main
+2026-10-23,Tirage,Curl haltères,3,12,8,par main
+2026-10-23,Tirage,Curl haltères,4,12,8,par main
+2026-10-28,Jambes,Presse à cuisses,1,12,50,chauffe
+2026-10-28,Jambes,Presse à cuisses,2,12,100,
+2026-10-28,Jambes,Presse à cuisses,3,12,110,
+2026-10-28,Jambes,Presse à cuisses,4,12,110,
+2026-10-28,Jambes,Presse à cuisses,5,12,110,110 validé
+2026-10-28,Jambes,Leg extension,1,12,30,
+2026-10-28,Jambes,Leg extension,2,12,30,
+2026-10-28,Jambes,Leg extension,3,12,35,
+2026-10-28,Jambes,Leg extension,4,12,35,
+2026-10-28,Jambes,Leg curl,1,12,15,chauffe
+2026-10-28,Jambes,Leg curl,2,12,35,
+2026-10-28,Jambes,Leg curl,3,12,35,
+2026-10-28,Jambes,Leg curl,4,12,35,
+2026-10-29,Poussée,Chest press,1,10,20,chauffe
+2026-10-29,Poussée,Chest press,2,10,30,
+2026-10-29,Poussée,Chest press,3,10,35,
+2026-10-29,Poussée,Chest press,4,10,35,
+2026-10-29,Poussée,Shoulder press,1,10,15,chauffe
+2026-10-29,Poussée,Shoulder press,2,10,25,
+2026-10-29,Poussée,Shoulder press,3,10,25,
+2026-10-29,Poussée,Shoulder press,4,10,25,
+2026-10-29,Poussée,Élévations latérales,1,12,6,par main
+2026-10-29,Poussée,Élévations latérales,2,12,6,par main
+2026-10-29,Poussée,Élévations latérales,3,12,6,par main
+2026-10-29,Poussée,Pec deck,1,12,15,
+2026-10-29,Poussée,Pec deck,2,12,15,
+2026-10-29,Poussée,Pec deck,3,8,15,
+2026-10-30,Tirage,Tirage vertical,1,15,15,chauffe
+2026-10-30,Tirage,Tirage vertical,2,10,35,
+2026-10-30,Tirage,Tirage vertical,3,10,40,
+2026-10-30,Tirage,Tirage vertical,4,10,40,
+2026-10-30,Tirage,Rowing assis,1,12,15,chauffe
+2026-10-30,Tirage,Rowing assis,2,10,35,
+2026-10-30,Tirage,Rowing assis,3,10,35,2 dernières incomplètes
+2026-10-30,Tirage,Rowing assis,4,10,35,2 dernières incomplètes
+2026-10-30,Tirage,Curl haltères,1,12,10,par main
+2026-10-30,Tirage,Curl haltères,2,10,10,par main
+2026-10-30,Tirage,Curl haltères,3,10,10,par main ; 3 dernières à gauche à 8
+2026-11-03,Jambes,Hack squat,1,10,0,chauffe à vide
+2026-11-03,Jambes,Hack squat,2,10,40,20 par côté
+2026-11-03,Jambes,Hack squat,3,10,40,20 par côté
+2026-11-03,Jambes,Hack squat,4,10,40,20 par côté
+2026-11-03,Jambes,Hack squat,5,10,40,20 par côté ; passer à 25
+2026-11-03,Jambes,Soulevé de terre roumain,1,10,20,barre vide
+2026-11-03,Jambes,Soulevé de terre roumain,2,10,40,
+2026-11-03,Jambes,Soulevé de terre roumain,3,10,40,
+2026-11-03,Jambes,Soulevé de terre roumain,4,10,40,
+2026-11-03,Jambes,Hip thrust,1,10,35,
+2026-11-03,Jambes,Hip thrust,2,10,35,
+2026-11-03,Jambes,Hip thrust,3,10,35,
+2026-11-03,Jambes,Hip thrust,4,10,40,
+2026-11-03,Jambes,Leg curl,1,12,35,
+2026-11-03,Jambes,Leg curl,2,12,35,
+2026-11-03,Jambes,Leg curl,3,12,35,
+2026-11-04,Poussée,Chest press,1,10,20,chauffe 10 par côté
+2026-11-04,Poussée,Chest press,2,8,40,20 par côté
+2026-11-04,Poussée,Chest press,3,8,40,20 par côté
+2026-11-04,Poussée,Chest press,4,8,40,20 par côté
+2026-11-04,Poussée,Chest press,5,8,40,20 par côté
+2026-11-04,Poussée,Shoulder press,1,10,10,chauffe 5 par côté
+2026-11-04,Poussée,Shoulder press,2,10,25,
+2026-11-04,Poussée,Shoulder press,3,10,25,
+2026-11-04,Poussée,Shoulder press,4,10,20,redescendu pour garder le dos collé
+2026-11-04,Poussée,Dips assistés,1,8,35,contrepoids
+2026-11-04,Poussée,Dips assistés,2,8,35,contrepoids
+2026-11-04,Poussée,Dips assistés,3,8,35,contrepoids
+2026-11-04,Poussée,Écartés haltères inclinés,1,12,8,par main
+2026-11-04,Poussée,Écartés haltères inclinés,2,12,8,par main
+2026-11-04,Poussée,Écartés haltères inclinés,3,12,8,par main
+2026-11-04,Poussée,Élévations latérales,1,12,6,par main
+2026-11-04,Poussée,Élévations latérales,2,12,6,par main
+2026-11-04,Poussée,Élévations latérales,3,12,6,par main
+2026-11-05,Tirage,Traction assistée,1,10,49,contrepoids
+2026-11-05,Tirage,Traction assistée,2,8,49,contrepoids
+2026-11-05,Tirage,Traction assistée,3,8,42,contrepoids
+2026-11-05,Tirage,Traction assistée,4,8,42,contrepoids
+2026-11-05,Tirage,Low row,1,10,20,10 par côté
+2026-11-05,Tirage,Low row,2,10,30,15 par côté
+2026-11-05,Tirage,Low row,3,10,35,17.5 par côté
+2026-11-05,Tirage,Low row,4,10,35,17.5 par côté
+2026-11-05,Tirage,Rowing assis,1,10,35,
+2026-11-05,Tirage,Rowing assis,2,10,35,
+2026-11-05,Tirage,Rowing assis,3,10,35,
+2026-11-05,Tirage,Curl pupitre EZ,1,12,15,barre EZ + 2.5 par côté
+2026-11-05,Tirage,Curl pupitre EZ,2,12,20,barre EZ + 5 par côté
+2026-11-05,Tirage,Curl pupitre EZ,3,12,20,barre EZ + 5 par côté
+2026-11-05,Tirage,Face pull,1,15,10,technique à valider
+2026-11-05,Tirage,Face pull,2,15,10,technique à valider
+2026-11-05,Tirage,Face pull,3,15,10,technique à valider
