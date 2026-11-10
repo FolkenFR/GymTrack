@@ -259,7 +259,7 @@
         <p class="small muted" style="margin:10px 0 0">Enregistre la séance dans l'onglet <b>Cardio</b> une fois terminée.</p>
         <button class="btn small" style="margin-top:8px" data-go="cardio">Ouvrir le formulaire cardio</button></div>`;
     } else {
-      for (const ex of s.exercices) html += renderExercise(ex, s);
+      s.exercices.forEach((ex, i) => { html += renderExercise(ex, s, i + 1); });
       html += renderFreeExercise(s);
     }
 
@@ -278,7 +278,7 @@
       <div class="credit">Images : free-exercise-db (domaine public)</div></details>`;
   }
 
-  function renderExercise(ex, session) {
+  function renderExercise(ex, session, index) {
     const done = data.muscu
       .filter((e) => e.date === todayState.date && canon(e.exercice) === ex.nom)
       .sort((a, b) => (a.serie ?? 0) - (b.serie ?? 0));
@@ -292,7 +292,7 @@
       const work = last.sets.filter((e) => !e.chauffe);
       const warm = last.sets.length - work.length;
       const summary = work.map((e) => `${fmtNum(e.reps)}×${fmtNum(e.charge_kg)}`).join(', ');
-      lastHtml = `<div class="exo-last">Dernière fois (${fmtDate(last.date)}) : <strong>${esc(summary) || '—'}</strong>${warm ? ` <span class="muted">+${warm} chauffe</span>` : ''}</div>`;
+      lastHtml = `<div class="exo-last">Dernière fois, le ${fmtDate(last.date)} <strong>${esc(summary) || '—'}</strong>${warm ? ` <span class="muted">+${warm} chauffe</span>` : ''}</div>`;
     }
 
     let rows = '';
@@ -308,21 +308,22 @@
     }
 
     const doneHtml = done.length
-      ? `<div class="done-list">${done.map((e) => `<span class="pill ${e.chauffe ? 'warm' : ''}">S${e.serie} · ${fmtNum(e.reps)}×${fmtNum(e.charge_kg)}${e.chauffe ? ' (chauffe)' : ''}<button type="button" data-del="${e.id}" aria-label="Supprimer">×</button></span>`).join('')}</div>`
+      ? `<div class="done-list">${done.map((e) => `<span class="pill ${e.chauffe ? 'warm' : ''}"><b>${e.serie}</b>${fmtNum(e.reps)} × ${fmtNum(e.charge_kg)}${e.chauffe ? '<i>chauffe</i>' : ''}<button type="button" data-del="${e.id}" aria-label="Supprimer la série ${e.serie}">×</button></span>`).join('')}</div>`
       : '';
 
-    return `<article class="card exo" data-rest="${ex.repos_s}">
-      <div class="exo-head"><div><h3>${esc(ex.nom)}</h3><div class="exo-detail">${esc(ex.detail)} · repos ${ex.repos_s} s · ${esc(ex.progression)}</div></div>
-        <span class="exo-target">${ex.series}×${ex.reps} @ ${fmtNum(ex.charge_kg)}</span></div>
-      ${lastHtml}${demoBlock(ex.gif, ex.nom)}${doneHtml}
+    return `<article class="exo" data-rest="${ex.repos_s}">
+      <div class="exo-head"><h3><span class="exo-n">${index}</span>${esc(ex.nom)}</h3></div>
+      <div class="exo-target"><span class="t-load">${fmtNum(ex.charge_kg)}<small>${unit === 'kg' ? 'kg' : 'cp'}</small></span><span class="t-sets">${ex.series} × ${ex.reps}</span><span class="t-rest">repos ${ex.repos_s} s</span></div>
+      <div class="exo-detail">${esc(ex.detail)}, ${esc(ex.progression)}</div>
+      ${lastHtml}${doneHtml}
       <div class="sets">${rows}</div>
-      <button class="btn small ghost add-set" type="button" data-add="${esc(ex.nom)}">+ série</button>
+      <div class="exo-foot"><button class="btn small ghost add-set" type="button" data-add="${esc(ex.nom)}">+ série</button>${demoBlock(ex.gif, ex.nom)}</div>
     </article>`;
   }
 
   function renderFreeExercise(session) {
     const names = allExerciseNames().filter((n) => !session.exercices.some((e) => e.nom === n));
-    return `<article class="card exo" data-rest="60">
+    return `<article class="exo exo-free" data-rest="60">
       <div class="exo-head"><h3>Autre exercice</h3></div>
       <label class="field" style="margin-top:8px"><span>Nom</span><input type="text" id="free-name" list="free-names" placeholder="Presse à cuisses…"></label>
       <datalist id="free-names">${names.map((n) => `<option value="${esc(n)}">`).join('')}</datalist>
@@ -366,7 +367,7 @@
     if (extra) todayState.extraRows[row.dataset.ex] = extra - 1;
     if (todayState.date === todayISO()) ensureChronoStarted();
     renderToday();
-    startRest(Number(card.dataset.rest) || 60, `${exName} · série ${serie} faite`);
+    startRest(Number(card.dataset.rest) || 60, `${exName}, série ${serie}`);
     toast(`Série ${serie} enregistrée`);
   }
 
@@ -488,7 +489,9 @@
     }
     el.hidden = false;
     el.classList.toggle('stopped', !!c.end);
-    el.textContent = fmtElapsed((c.end || Date.now()) - c.start);
+    const elapsed = (c.end || Date.now()) - c.start;
+    el.textContent = fmtElapsed(elapsed);
+    el.style.setProperty('--chrono-p', Math.min(1, elapsed / (90 * 60000)).toFixed(4));
     if (!c.end && !chronoTimer) chronoTimer = setInterval(updateChrono, 1000);
     if (c.end && chronoTimer) { clearInterval(chronoTimer); chronoTimer = null; }
   }
@@ -551,7 +554,7 @@
       groups.get(key).sets.push(e);
     }
     const sessions = [...groups.values()].sort((a, b) => b.date.localeCompare(a.date) || a.seance.localeCompare(b.seance, 'fr'));
-    $('#history-count').textContent = `${sessions.length} séance${sessions.length > 1 ? 's' : ''} · ${rows.length} série${rows.length > 1 ? 's' : ''}`;
+    $('#history-count').textContent = `${sessions.length} séance${sessions.length > 1 ? 's' : ''}, ${rows.length} série${rows.length > 1 ? 's' : ''}`;
     const root = $('#history-sessions');
     if (!sessions.length) { root.innerHTML = '<p class="empty">Aucune séance</p>'; return; }
 
@@ -575,7 +578,7 @@
         if (better) progressions += 1;
         const badge = better ? `<span class="badge-progress" title="${cmp.counterweight ? 'Contrepoids' : 'Charge max'} ${fmtNum(cmp.top)} contre ${fmtNum(cmp.prev)} la fois précédente">Progression ${cmp.counterweight ? '−' : '+'}${fmtNum(cmp.delta)}</span>` : '';
         const top = cmp ? `<span class="ex-top">${fmtNum(cmp.top)}${cmp.counterweight ? ' cp' : ' kg'}</span>` : '';
-        return `<tr class="ex-line"><td colspan="5"><span class="ex-name">${esc(name)}</span> <span class="muted">· ${sets.length} série${sets.length > 1 ? 's' : ''}</span> ${top}${badge}</td></tr>`
+        return `<tr class="ex-line"><td colspan="5"><span class="ex-name">${esc(name)}</span> <span class="muted">${sets.length} série${sets.length > 1 ? 's' : ''}</span> ${top}${badge}</td></tr>`
           + sets.map((e) => setRowHtml(e, { withDate: false, withExercise: false })).join('');
       }).join('');
 
@@ -585,7 +588,7 @@
           c.duree_min != null ? `${fmtNum(c.duree_min)} min` : null,
           c.distance_km != null ? `${fmtNum(c.distance_km)} km` : null,
           c.fc_moy != null ? `FC moy ${fmtNum(c.fc_moy)}` : null,
-        ].filter(Boolean).join(' · ');
+        ].filter(Boolean).join(', ');
         return `<div class="session-cardio"><span class="k">${esc(c.type)}</span> ${esc(meta) || '—'}</div>`;
       }).join('');
 
@@ -593,7 +596,7 @@
         <summary>
           <div class="session-sum">
             <div class="session-sum-head"><span class="session-date">${fmtDate(s.date)}</span><span class="session-type">${esc(s.seance) || 'Séance'}</span>${progressions ? `<span class="badge-progress">${progressions} ↑</span>` : ''}</div>
-            <div class="session-sum-meta">${byEx.size} exercice${byEx.size > 1 ? 's' : ''} · ${s.sets.length} série${s.sets.length > 1 ? 's' : ''} · volume <b>${fmtNum(Math.round(volume))} kg</b></div>
+            <div class="session-sum-meta"><span>${byEx.size} exercice${byEx.size > 1 ? 's' : ''}</span><span>${s.sets.length} série${s.sets.length > 1 ? 's' : ''}</span><span>volume <b>${fmtNum(Math.round(volume))} kg</b></span></div>
             ${cardioHtml}
           </div>
         </summary>
@@ -616,7 +619,7 @@
       const last = pts[pts.length - 1][1];
       const first = pts[0][1];
       const delta = last - first;
-      return `<article class="card chart-card"><h3>${esc(n)}<span>${fmtNum(last)} kg${delta ? ` <small class="muted">(${delta > 0 ? '+' : ''}${fmtNum(delta)})</small>` : ''}</span></h3>${svgChart(pts)}</article>`;
+      return `<article class="chart-card"><h3>${esc(n)}<span>${fmtNum(last)}<small> kg</small>${delta ? `<em>${delta > 0 ? '+' : ''}${fmtNum(delta)}</em>` : ''}</span></h3>${svgChart(pts)}</article>`;
     }).join('');
   }
 
@@ -665,7 +668,7 @@
         c.distance_km != null ? `${fmtNum(c.distance_km)} km` : null,
         c.fc_moy != null ? `FC ${fmtNum(c.fc_moy)}${c.fc_max != null ? `/${fmtNum(c.fc_max)}` : ''}` : null,
         c.pente_moy_pct != null ? `pente ${fmtNum(c.pente_moy_pct)} %` : null,
-      ].filter(Boolean).join(' · ');
+      ].filter(Boolean).join(', ');
       return `<article class="card cardio-item"><span class="d">${fmtDate(c.date)}</span><div><div class="t">${esc(c.type)}</div><div class="m">${esc(meta)}</div></div>
         <button class="btn icon ghost" data-del-cardio="${c.id}" aria-label="Supprimer">×</button>${c.note ? `<div class="n">${esc(c.note)}</div>` : ''}</article>`;
     }).join('') : '<p class="empty">Aucune séance cardio</p>';
@@ -699,7 +702,7 @@
     tiles.push({
       label: 'IMC',
       value: imc != null ? imc.toFixed(1).replace('.', ',') : '—',
-      sub: imc != null ? `${fmtNum(last.poids_kg)} kg · ${fmtNum(p.taille_cm)} cm` : (last ? 'Renseigne ta taille' : 'Renseigne ton poids'),
+      sub: imc != null ? `${fmtNum(last.poids_kg)} kg pour ${fmtNum(p.taille_cm)} cm` : (last ? 'Renseigne ta taille' : 'Renseigne ton poids'),
     });
     const cw = currentCounterweight();
     tiles.push({
@@ -726,7 +729,7 @@
       const pts = sorted.map((w) => [w.date, Number(w.poids_kg)]);
       const first = pts[0][1], lastV = pts[pts.length - 1][1];
       const delta = Math.round((lastV - first) * 10) / 10;
-      chart.innerHTML = `<h3>Poids de corps<span>${fmtNum(lastV)} kg${delta ? ` <small class="muted">(${delta > 0 ? '+' : ''}${fmtNum(delta)})</small>` : ''}</span></h3>${svgChart(pts, { label: 'Évolution du poids de corps' })}`;
+      chart.innerHTML = `<h3>Poids de corps<span>${fmtNum(lastV)}<small> kg</small>${delta ? `<em>${delta > 0 ? '+' : ''}${fmtNum(delta)}</em>` : ''}</span></h3>${svgChart(pts, { label: 'Évolution du poids de corps' })}`;
       chart.hidden = false;
     } else chart.hidden = true;
     const list = [...sorted].reverse();
@@ -738,7 +741,7 @@
 
   // ---------- Rendu : Données ----------
   function renderData() {
-    $('#data-stats').textContent = `${data.muscu.length} séries · ${data.cardio.length} cardio · ${data.gainage.length} gainage · ${data.poids.length} pesée${data.poids.length > 1 ? 's' : ''} — stockés dans ce navigateur.`;
+    $('#data-stats').textContent = `${data.muscu.length} séries, ${data.cardio.length} cardio, ${data.gainage.length} gainage, ${data.poids.length} pesée${data.poids.length > 1 ? 's' : ''}, stockés dans ce navigateur.`;
     $('#programme-rules').innerHTML = `<p class="muted" style="margin:0 0 6px">${esc(programme.nom)}</p><ul class="plain">${programme.progression.regles.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
   }
 

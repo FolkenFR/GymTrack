@@ -85,7 +85,7 @@ Tous les chemins sont relatifs : le site fonctionne aussi bien à la racine d'un
 ```
 index.html            structure des six écrans
 app.js                logique (stockage, rendu, timer, graphiques SVG)
-styles.css            thème sombre, mobile-first
+styles.css            thème sombre, mobile-first (identité visuelle : voir DESIGN.md)
 sw.js                 service worker (cache hors ligne)
 manifest.webmanifest  manifeste PWA
 icons/                icônes

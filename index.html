@@ -3,30 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111418">
+  <meta name="theme-color" content="#141a2b">
   <meta name="description" content="Suivi personnel de musculation, cardio et gainage.">
   <title>GymTrack</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <h1 class="brand">Gym<span>Track</span></h1>
-    <button id="chrono" class="chrono" hidden title="Chrono de séance — appuyer pour arrêter" aria-live="off">00:00</button>
+    <h1 class="brand">GymTrack</h1>
     <span id="today-label" class="topbar-date"></span>
+    <button id="chrono" class="chrono" hidden title="Chrono de séance : appuyer pour arrêter" aria-live="off">00:00</button>
   </header>
 
   <!-- Timer de repos (barre collante en haut) -->
   <div id="rest-timer" class="rest-timer" hidden role="timer" aria-live="polite">
     <div class="rest-inner">
       <div class="rest-text"><span class="rest-label">Repos</span><span class="rest-sub" id="rest-sub"></span></div>
+      <button class="btn rest-btn" id="rest-plus" type="button">+30 s</button>
       <span class="rest-time" id="rest-time">60</span>
-      <div class="rest-actions">
-        <button class="btn small" id="rest-plus" type="button">+30 s</button>
-        <button class="btn small" id="rest-stop" type="button">Passer</button>
-      </div>
+      <button class="btn rest-btn" id="rest-stop" type="button">Passer</button>
     </div>
     <div class="rest-bar"><div class="rest-fill" id="rest-fill"></div></div>
   </div>
@@ -79,7 +79,7 @@
 
     <!-- Écran : Progression -->
     <section id="screen-progress" class="screen" data-screen="progress" hidden>
-      <p class="muted small">Charge maximale (hors échauffement) par séance, pour chaque exercice.</p>
+      <p class="lead">Charge maximale par séance, échauffement exclu.</p>
       <div id="progress-charts"></div>
     </section>
 
@@ -137,7 +137,7 @@
         <h2>Fiche</h2>
         <label class="field"><span>Taille (cm)</span><input type="number" name="taille_cm" min="100" max="250" step="1" inputmode="numeric" placeholder="178"></label>
         <label class="field"><span>Date de naissance <em id="profil-age" class="age"></em></span><input type="date" name="naissance"></label>
-        <label class="field"><span>FC max estimée (bpm)</span><input type="number" name="fc_max" min="100" max="230" step="1" inputmode="numeric" placeholder="185"></label>
+        <label class="field"><span>FC max (bpm)</span><input type="number" name="fc_max" min="100" max="230" step="1" inputmode="numeric" placeholder="185"></label>
         <div class="field"><span>&nbsp;</span><button type="button" class="btn" id="btn-fcmax" title="Formule 220 − âge">Estimer (220 − âge)</button></div>
         <label class="field span2"><span>Objectif</span><input type="text" name="objectif" placeholder="Traction complète sans assistance…"></label>
         <div class="span2 right"><button type="submit" class="btn primary">Enregistrer</button></div>
