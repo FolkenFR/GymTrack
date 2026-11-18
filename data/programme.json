@@ -112,8 +112,8 @@
           "nom": "Chest press incliné",
           "series": 4,
           "reps": 8,
-          "charge_kg": 45,
-          "detail": "22,5 kg/côté = 45 kg",
+          "charge_kg": 50,
+          "detail": "45 / 45 / 50 / 50 (25 kg/côté en test)",
           "repos_s": 90,
           "progression": "+2,5 kg/côté",
           "alias": [
@@ -125,8 +125,8 @@
           "nom": "Shoulder press",
           "series": 3,
           "reps": 10,
-          "charge_kg": 25,
-          "detail": "25 kg total",
+          "charge_kg": 30,
+          "detail": "25 / 25 / 30 kg total",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
           "gif": "assets/gifs/shoulder-press.gif"
@@ -146,8 +146,8 @@
           "nom": "Écartés haltères inclinés",
           "series": 3,
           "reps": 12,
-          "charge_kg": 8,
-          "detail": "8 kg/main",
+          "charge_kg": 10,
+          "detail": "10 kg/main",
           "repos_s": 60,
           "progression": "+2 kg/main",
           "gif": "assets/gifs/ecartes-halteres-inclines.gif"
@@ -193,7 +193,8 @@
           "nom": "Planche 2×60 s",
           "gif": "assets/gifs/planche.gif"
         }
-      ]
+      ],
+      "exercices": []
     },
     {
       "id": "tirage",
@@ -217,41 +218,33 @@
           "nom": "Low row",
           "series": 3,
           "reps": 10,
-          "charge_kg": 35,
-          "detail": "17,5 kg/côté = 35 kg",
+          "charge_kg": 40,
+          "detail": "20 kg/côté",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
           "gif": "assets/gifs/low-row.gif"
         },
         {
-          "nom": "Rowing assis poulie",
-          "series": 3,
-          "reps": 10,
-          "charge_kg": 35,
-          "detail": "poulie, 35 kg",
-          "repos_s": 60,
-          "progression": "+5 kg",
-          "alias": [
-            "Rowing assis"
-          ],
-          "gif": "assets/gifs/rowing-assis-poulie.gif"
-        },
-        {
-          "nom": "Curl pupitre EZ",
+          "nom": "Curl (pupitre EZ / marteau en alternance)",
           "series": 3,
           "reps": 12,
-          "charge_kg": 10,
-          "detail": "barre EZ + 5 kg/côté",
+          "charge_kg": 20,
+          "detail": "pupitre : barre EZ + 5/côté ; marteau : 8 kg/main",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
-          "gif": "assets/gifs/curl-pupitre-ez.gif"
+          "gif": "assets/gifs/curl-pupitre-ez.gif",
+          "alias": [
+            "Curl haltères",
+            "Curl marteau",
+            "Curl pupitre EZ"
+          ]
         },
         {
           "nom": "Face pull",
           "series": 3,
           "reps": 15,
-          "charge_kg": 10,
-          "detail": "poulie, 10 kg",
+          "charge_kg": 15,
+          "detail": "15 kg, en fente ou assis",
           "repos_s": 60,
           "progression": "+5 kg",
           "gif": "assets/gifs/face-pull.gif"
@@ -291,7 +284,8 @@
           "nom": "Pompes 2×10-12",
           "gif": "assets/gifs/pompes.gif"
         }
-      ]
+      ],
+      "exercices": []
     }
   ],
   "gainage_exercices": [

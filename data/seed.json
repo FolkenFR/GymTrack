@@ -1,6 +1,6 @@
 {
  "version": 2,
- "exported_at": "2026-11-10T17:52:45Z",
+ "exported_at": "2026-11-18T11:57:12Z",
  "muscu": [
   {
    "date": "2026-09-30",
@@ -2021,6 +2021,336 @@
    "charge_kg": 6,
    "chauffe": false,
    "note": "par main"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 20,
+   "chauffe": true,
+   "note": "chauffe 10 par côté"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 4,
+   "reps": 8,
+   "charge_kg": 45,
+   "chauffe": false,
+   "note": "22.5 par côté"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Chest press",
+   "serie": 5,
+   "reps": 8,
+   "charge_kg": 50,
+   "chauffe": false,
+   "note": "25 par côté"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 10,
+   "chauffe": true,
+   "note": "chauffe"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 2,
+   "reps": 10,
+   "charge_kg": 25,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 3,
+   "reps": 10,
+   "charge_kg": 25,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Shoulder press",
+   "serie": 4,
+   "reps": 10,
+   "charge_kg": 30,
+   "chauffe": false,
+   "note": "2 dernières dures"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 1,
+   "reps": 8,
+   "charge_kg": 35,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 28,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Dips assistés",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 28,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 8,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 10,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Écartés haltères inclinés",
+   "serie": 3,
+   "reps": 12,
+   "charge_kg": 10,
+   "chauffe": false,
+   "note": "par main ; 2 dernières dures"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-17",
+   "seance": "Poussée",
+   "exercice": "Élévations latérales",
+   "serie": 3,
+   "reps": 12,
+   "charge_kg": 6,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Traction assistée",
+   "serie": 1,
+   "reps": 8,
+   "charge_kg": 49,
+   "chauffe": true,
+   "note": "contrepoids ; chauffe"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Traction assistée",
+   "serie": 2,
+   "reps": 8,
+   "charge_kg": 42,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Traction assistée",
+   "serie": 3,
+   "reps": 8,
+   "charge_kg": 42,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Traction assistée",
+   "serie": 4,
+   "reps": 8,
+   "charge_kg": 42,
+   "chauffe": false,
+   "note": "contrepoids"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Traction assistée",
+   "serie": 5,
+   "reps": 8,
+   "charge_kg": 42,
+   "chauffe": false,
+   "note": "contrepoids ; 3 dernières dures"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Low row",
+   "serie": 1,
+   "reps": 10,
+   "charge_kg": 20,
+   "chauffe": true,
+   "note": "chauffe 10 par côté"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Low row",
+   "serie": 2,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": "20 par côté"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Low row",
+   "serie": 3,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": "20 par côté"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Low row",
+   "serie": 4,
+   "reps": 10,
+   "charge_kg": 40,
+   "chauffe": false,
+   "note": "20 par côté"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Face pull",
+   "serie": 1,
+   "reps": 15,
+   "charge_kg": 12.5,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Face pull",
+   "serie": 2,
+   "reps": 15,
+   "charge_kg": 15,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Face pull",
+   "serie": 3,
+   "reps": 15,
+   "charge_kg": 15,
+   "chauffe": false,
+   "note": ""
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Curl marteau",
+   "serie": 1,
+   "reps": 12,
+   "charge_kg": 10,
+   "chauffe": false,
+   "note": "par main"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Curl marteau",
+   "serie": 2,
+   "reps": 12,
+   "charge_kg": 10,
+   "chauffe": false,
+   "note": "par main ; dur à gauche"
+  },
+  {
+   "date": "2026-11-18",
+   "seance": "Tirage",
+   "exercice": "Curl marteau",
+   "serie": 3,
+   "reps": 9,
+   "charge_kg": 8,
+   "chauffe": false,
+   "note": "par main ; 3 dernières non terminées"
   }
  ],
  "cardio": [
