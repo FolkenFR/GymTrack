@@ -266,14 +266,46 @@
   }
 
   // ---------- Rendu : Aujourd'hui ----------
-  const todayState = { date: todayISO(), sessionId: null, extraRows: {} };
+  // `open` : exercice déplié choisi à la main (nom), '-' pour tout replié, null = automatique
+  // (le premier exercice dont les séries de travail ne sont pas toutes faites).
+  const OPEN_KEY = 'gymtrack:today-open';
+  const todayState = { date: todayISO(), sessionId: null, extraRows: {}, open: null };
+  const openKey = () => `${todayState.date}|${todayState.sessionId}`;
+  function restoreOpen() {
+    todayState.open = null;
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(OPEN_KEY) || 'null');
+      if (saved && saved.key === openKey()) todayState.open = saved.open;
+    } catch (_) { /* ignore */ }
+  }
+  function persistOpen() {
+    try {
+      if (todayState.open == null) sessionStorage.removeItem(OPEN_KEY);
+      else sessionStorage.setItem(OPEN_KEY, JSON.stringify({ key: openKey(), open: todayState.open }));
+    } catch (_) { /* ignore */ }
+  }
+  /** Séries du jour pour un exercice du programme, et avancement des séries de travail. */
+  function exerciseProgress(ex) {
+    const done = data.muscu
+      .filter((e) => e.date === todayState.date && canon(e.exercice) === ex.nom)
+      .sort((a, b) => (a.serie ?? 0) - (b.serie ?? 0));
+    const work = done.filter((e) => !e.chauffe).length;
+    return { done, work, complete: work >= ex.series };
+  }
+  /** Nom de l'exercice à déplier : choix manuel, sinon le premier non terminé. */
+  function openedExercise(session) {
+    if (todayState.open === '-') return null;
+    if (todayState.open) return todayState.open;
+    const next = (session.exercices || []).find((ex) => !exerciseProgress(ex).complete);
+    return next ? next.nom : null;
+  }
 
   function renderToday() {
     const sel = $('#session-select');
     if (!sel.options.length) {
       sel.innerHTML = programme.seances.map((s) => `<option value="${s.id}">${esc(s.jour)} — ${esc(s.nom)}</option>`).join('');
     }
-    if (!todayState.sessionId) todayState.sessionId = defaultSessionId(todayState.date);
+    if (!todayState.sessionId) { todayState.sessionId = defaultSessionId(todayState.date); restoreOpen(); }
     sel.value = todayState.sessionId;
     $('#session-date').value = todayState.date;
 
@@ -288,7 +320,8 @@
         <p class="small muted" style="margin:10px 0 0">Enregistre la séance dans l'onglet <b>Cardio</b> une fois terminée.</p>
         <button class="btn small" style="margin-top:8px" data-go="cardio">Ouvrir le formulaire cardio</button></div>`;
     } else {
-      s.exercices.forEach((ex, i) => { html += renderExercise(ex, s, i + 1); });
+      const opened = openedExercise(s);
+      s.exercices.forEach((ex, i) => { html += renderExercise(ex, s, i + 1, ex.nom === opened); });
       html += renderFreeExercise(s);
     }
 
@@ -307,14 +340,25 @@
       <div class="credit">Images : free-exercise-db (domaine public)</div></details>`;
   }
 
-  function renderExercise(ex, session, index) {
-    const done = data.muscu
-      .filter((e) => e.date === todayState.date && canon(e.exercice) === ex.nom)
-      .sort((a, b) => (a.serie ?? 0) - (b.serie ?? 0));
+  /** Ligne de série à valider ; `warm` = série d'échauffement préremplie depuis `ex.chauffe`. */
+  function plannedRowHtml(ex, n, reps, kg, unit, warm) {
+    return `<div class="set-row${warm ? ' warm-row' : ''}" data-ex="${esc(ex.nom)}" data-n="${n}">
+      <span class="n">${warm ? 'ch' : n}</span>
+      <label class="num"><input type="number" inputmode="numeric" class="reps" value="${reps}" min="0" step="1"><span class="unit">reps</span></label>
+      <label class="num"><input type="number" inputmode="decimal" class="kg" value="${kg}" min="0" step="0.5"><span class="unit">${unit}</span></label>
+      <label class="chk${warm ? ' on' : ''}" title="Série d'échauffement"><input type="checkbox" class="warm"${warm ? ' checked' : ''}> chauffe</label>
+      <button class="set-ok" type="button" aria-label="Valider la série${warm ? ' d\'échauffement' : ''}">✓</button>
+    </div>`;
+  }
+
+  function renderExercise(ex, session, index, open) {
+    const { done, work, complete } = exerciseProgress(ex);
     const last = lastPerformance(ex.nom, todayState.date);
     const extra = todayState.extraRows[ex.nom] || 0;
-    const pending = Math.max(0, ex.series - done.length) + extra;
+    const pending = Math.max(0, ex.series - work) + extra;
     const unit = ex.contrepoids ? 'contrepoids' : 'kg';
+    // Échauffement planifié : une ligne préremplie tant que rien n'a été enregistré sur l'exercice.
+    const warmPlanned = !!ex.chauffe && done.length === 0;
 
     let lastHtml = '<div class="exo-last">Première fois sur cet exercice.</div>';
     if (last) {
@@ -325,35 +369,65 @@
     }
 
     let rows = '';
-    for (let i = 0; i < pending; i++) {
-      const n = done.length + i + 1;
-      rows += `<div class="set-row" data-ex="${esc(ex.nom)}" data-n="${n}">
-        <span class="n">${n}</span>
-        <label class="num"><input type="number" inputmode="numeric" class="reps" value="${ex.reps}" min="0" step="1"><span class="unit">reps</span></label>
-        <label class="num"><input type="number" inputmode="decimal" class="kg" value="${ex.charge_kg}" min="0" step="0.5"><span class="unit">${unit}</span></label>
-        <label class="chk" title="Série d'échauffement"><input type="checkbox" class="warm"> chauffe</label>
-        <button class="set-ok" type="button" aria-label="Valider la série">✓</button>
-      </div>`;
-    }
+    // Les numéros suivent la numérotation enregistrée (l'échauffement compte comme série 1).
+    const first = done.length + (warmPlanned ? 1 : 0) + 1;
+    if (warmPlanned) rows += plannedRowHtml(ex, done.length + 1, ex.chauffe.reps, ex.chauffe.charge_kg, unit, true);
+    for (let i = 0; i < pending; i++) rows += plannedRowHtml(ex, first + i, ex.reps, ex.charge_kg, unit, false);
 
     const doneHtml = done.length
       ? `<div class="done-list">${done.map((e) => `<span class="pill ${e.chauffe ? 'warm' : ''}"><b>${e.serie}</b>${fmtNum(e.reps)} × ${fmtNum(e.charge_kg)}${e.chauffe ? '<i>chauffe</i>' : ''}<button type="button" data-del="${e.id}" aria-label="Supprimer la série ${e.serie}">×</button></span>`).join('')}</div>`
       : '';
 
-    return `<article class="exo" data-rest="${ex.repos_s}">
-      <div class="exo-head"><h3><span class="exo-n">${index}</span>${esc(ex.nom)}</h3></div>
-      <div class="exo-target"><span class="t-load">${fmtNum(ex.charge_kg)}<small>${unit === 'kg' ? 'kg' : 'cp'}</small></span><span class="t-sets">${ex.series} × ${ex.reps}</span><span class="t-rest">repos ${ex.repos_s} s</span></div>
-      <div class="exo-detail">${esc(ex.detail)}, ${esc(ex.progression)}</div>
-      ${lastHtml}${doneHtml}
-      <div class="sets">${rows}</div>
-      <div class="exo-foot"><button class="btn small ghost add-set" type="button" data-add="${esc(ex.nom)}">+ série</button>${demoBlock(ex.gif, ex.nom)}</div>
+    // En-tête repliable : numéro, nom, cible courte, avancement des séries de travail.
+    const short = ex.contrepoids ? `contrepoids ${fmtNum(ex.charge_kg)}` : `${ex.series} × ${ex.reps} @ ${fmtNum(ex.charge_kg)} kg`;
+    const progress = complete
+      ? `<span class="exo-progress done" aria-label="${work} séries sur ${ex.series}, terminé">✓ ${work}/${ex.series}</span>`
+      : `<span class="exo-progress">${work}/${ex.series} séries</span>`;
+    const bodyId = `exo-body-${index}`;
+
+    return `<article class="exo${open ? ' open' : ''}${complete ? ' complete' : ''}" data-rest="${ex.repos_s}" data-ex="${esc(ex.nom)}">
+      <h3 class="exo-head"><button class="exo-toggle" type="button" aria-expanded="${open ? 'true' : 'false'}" aria-controls="${bodyId}" data-toggle="${esc(ex.nom)}">
+        <span class="exo-n">${index}</span><span class="exo-name">${esc(ex.nom)}</span>${progress}
+        <span class="exo-short"><span class="t">${esc(short)}</span>${warmPlanned ? '<span class="hint">+ chauffe</span>' : ''}</span>
+      </button></h3>
+      <div class="exo-body" id="${bodyId}"><div class="exo-body-in">
+        <div class="exo-target"><span class="t-load">${fmtNum(ex.charge_kg)}<small>${unit === 'kg' ? 'kg' : 'cp'}</small></span><span class="t-sets">${ex.series} × ${ex.reps}</span><span class="t-rest">repos ${ex.repos_s} s</span></div>
+        <div class="exo-detail">${esc(ex.detail)}, ${esc(ex.progression)}</div>
+        ${lastHtml}${doneHtml}
+        <div class="sets">${rows}</div>
+        <div class="exo-foot"><button class="btn small ghost add-set" type="button" data-add="${esc(ex.nom)}">+ série</button>${demoBlock(ex.gif, ex.nom)}</div>
+      </div></div>
     </article>`;
+  }
+
+  /** Déplie un exercice (accordéon : les autres se replient) sans re-rendu, pour laisser jouer la transition. */
+  function setOpenExercise(name, { scroll = false } = {}) {
+    $$('#today-content .exo[data-ex]').forEach((el) => {
+      const on = el.dataset.ex === name;
+      el.classList.toggle('open', on);
+      $('.exo-toggle', el)?.setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    if (!scroll || !name) return;
+    const el = $$('#today-content .exo[data-ex]').find((x) => x.dataset.ex === name);
+    if (!el) return;
+    // Cale l'en-tête de l'exercice sous les barres collantes (en-tête + repos).
+    const sticky = ($('.topbar')?.offsetHeight || 0) + ($('#rest-timer').hidden ? 0 : $('#rest-timer').offsetHeight);
+    const top = el.getBoundingClientRect().top + window.scrollY - sticky - 6;
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+  }
+  function toggleExercise(name) {
+    const s = sessionById(todayState.sessionId);
+    const current = openedExercise(s);
+    todayState.open = current === name ? '-' : name;
+    persistOpen();
+    setOpenExercise(current === name ? null : name);
   }
 
   function renderFreeExercise(session) {
     const names = allExerciseNames().filter((n) => !session.exercices.some((e) => e.nom === n));
     return `<article class="exo exo-free" data-rest="60">
-      <div class="exo-head"><h3>Autre exercice</h3></div>
+      <h3 class="exo-head">Autre exercice</h3>
       <label class="field" style="margin-top:8px"><span>Nom</span><input type="text" id="free-name" list="free-names" placeholder="Presse à cuisses…"></label>
       <datalist id="free-names">${names.map((n) => `<option value="${esc(n)}">`).join('')}</datalist>
       <div class="sets"><div class="set-row" data-ex="" data-n="0">
@@ -392,13 +466,30 @@
       note: chauffe ? 'chauffe' : '',
     });
     save();
+    const progEx = (session.exercices || []).find((e) => e.nom === canon(exName));
+    const workBefore = existing.filter((e) => !e.chauffe).length;
     const extra = todayState.extraRows[row.dataset.ex];
-    if (extra) todayState.extraRows[row.dataset.ex] = extra - 1;
+    // Une série ajoutée à la main n'est consommée que si les séries prévues sont déjà faites.
+    if (extra && !chauffe && progEx && workBefore >= progEx.series) todayState.extraRows[row.dataset.ex] = extra - 1;
     if (todayState.date === todayISO()) ensureChronoStarted();
+    // Dernière série de travail : l'exercice se replie (✓), puis le suivant s'ouvre après un court délai.
+    const justCompleted = !!progEx && !chauffe && workBefore < progEx.series && workBefore + 1 >= progEx.series;
+    clearTimeout(advanceTimer);
+    if (justCompleted) todayState.open = '-';
     renderToday();
-    startRest(Number(card.dataset.rest) || 60, `${exName}, série ${serie}`);
-    toast(`Série ${serie} enregistrée`);
+    if (justCompleted) {
+      advanceTimer = setTimeout(() => {
+        todayState.open = null;
+        persistOpen();
+        setOpenExercise(openedExercise(session), { scroll: true });
+      }, 900);
+    }
+    startRest(chauffe ? WARMUP_REST_S : (Number(card.dataset.rest) || 60), `${exName}, ${chauffe ? 'chauffe' : `série ${serie}`}`);
+    toast(chauffe ? 'Échauffement enregistré' : `Série ${serie} enregistrée`);
   }
+  /** Repos après une série d'échauffement (au lieu des 90 s / 60 s de l'exercice). */
+  const WARMUP_REST_S = 45;
+  let advanceTimer = null;
 
   // ---------- Timer de repos (basé sur des timestamps : survit à l'écran éteint) ----------
   const REST_KEY = 'gymtrack:rest';
@@ -842,15 +933,18 @@
       if (b) showScreen(b.dataset.target);
     });
 
-    $('#session-select').addEventListener('change', (e) => { todayState.sessionId = e.target.value; todayState.extraRows = {}; renderToday(); });
+    $('#session-select').addEventListener('change', (e) => { todayState.sessionId = e.target.value; todayState.extraRows = {}; restoreOpen(); renderToday(); });
     $('#session-date').addEventListener('change', (e) => {
       todayState.date = e.target.value || todayISO();
       todayState.sessionId = defaultSessionId(todayState.date);
       todayState.extraRows = {};
+      restoreOpen();
       renderToday();
     });
 
     $('#today-content').addEventListener('click', (e) => {
+      const tog = e.target.closest('.exo-toggle');
+      if (tog) { clearTimeout(advanceTimer); toggleExercise(tog.dataset.toggle); return; }
       const ok = e.target.closest('.set-ok');
       if (ok) { logSet(ok.closest('.set-row')); return; }
       const del = e.target.closest('[data-del]');

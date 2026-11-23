@@ -46,6 +46,10 @@
           "detail": "30 kg/côté (disques), 4 séries maximum",
           "repos_s": 90,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 0
+          },
           "gif": "assets/gifs/hack-squat.gif"
         },
         {
@@ -53,9 +57,13 @@
           "series": 3,
           "reps": 10,
           "charge_kg": 80,
-          "detail": "40 kg/côté à tester (20/côté en chauffe), pieds en haut de la plateforme",
+          "detail": "40 kg/côté à tester, pieds en haut de la plateforme",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 40
+          },
           "gif": "assets/gifs/presse-45.gif",
           "alias": [
             "Soulevé de terre roumain",
@@ -70,6 +78,10 @@
           "detail": "40 kg",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 20
+          },
           "gif": "assets/gifs/hip-thrust.gif"
         },
         {
@@ -80,6 +92,10 @@
           "detail": "machine guidée, 35 kg",
           "repos_s": 60,
           "progression": "+5 kg",
+          "chauffe": {
+            "reps": 12,
+            "charge_kg": 15
+          },
           "alias": [
             "Leg curl"
           ],
@@ -116,6 +132,10 @@
           "detail": "45 / 45 / 50 / 50 (25 kg/côté en test)",
           "repos_s": 90,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 20
+          },
           "alias": [
             "Chest press"
           ],
@@ -129,6 +149,10 @@
           "detail": "25 / 25 / 30 kg total",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 10
+          },
           "gif": "assets/gifs/shoulder-press.gif"
         },
         {
@@ -139,6 +163,10 @@
           "detail": "contrepoids 28",
           "repos_s": 60,
           "progression": "−5 contrepoids",
+          "chauffe": {
+            "reps": 8,
+            "charge_kg": 35
+          },
           "contrepoids": true,
           "gif": "assets/gifs/dips-assistes.gif"
         },
@@ -211,6 +239,10 @@
           "detail": "contrepoids 42",
           "repos_s": 90,
           "progression": "−5 contrepoids",
+          "chauffe": {
+            "reps": 8,
+            "charge_kg": 49
+          },
           "contrepoids": true,
           "gif": "assets/gifs/traction-assistee.gif"
         },
@@ -222,6 +254,10 @@
           "detail": "20 kg/côté",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 10,
+            "charge_kg": 20
+          },
           "gif": "assets/gifs/low-row.gif"
         },
         {
@@ -232,6 +268,10 @@
           "detail": "pupitre : barre EZ + 5/côté ; marteau : 8 kg/main",
           "repos_s": 60,
           "progression": "+2,5 kg/côté",
+          "chauffe": {
+            "reps": 12,
+            "charge_kg": 10
+          },
           "gif": "assets/gifs/curl-pupitre-ez.gif",
           "alias": [
             "Curl haltères",
@@ -247,6 +287,10 @@
           "detail": "15 kg, en fente ou assis",
           "repos_s": 60,
           "progression": "+5 kg",
+          "chauffe": {
+            "reps": 15,
+            "charge_kg": 10
+          },
           "gif": "assets/gifs/face-pull.gif"
         }
       ],

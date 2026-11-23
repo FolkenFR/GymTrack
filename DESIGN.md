@@ -68,6 +68,22 @@ droite.
 │   …                                  │
 ```
 
+**Accordéon.** Une séance de cinq exercices dépliés faisait trois écrans de champs ; seul
+l'exercice en cours mérite ses lignes de saisie. Chaque exercice est donc un bloc repliable dont
+l'en-tête (un bouton pleine largeur, `aria-expanded`) tient sur deux lignes : numéro, nom et
+avancement « 2/4 séries » à droite (séries de travail seulement ; « ✓ 4/4 » en cyan une fois
+terminé, le nom passe en gris), puis la cible en court (« 4 × 8 @ 50 kg », « contrepoids 42 ») et
+le rappel « + chauffe » tant que l'échauffement prévu n'est pas enregistré. Un seul bloc est
+ouvert : par défaut le premier exercice non terminé ; un appui sur un en-tête remplace l'exercice
+ouvert ou replie celui qui l'est, et ce choix manuel est mémorisé pour la journée (`sessionStorage`).
+Quand la dernière série de travail est validée, le bloc se replie avec sa coche, puis le suivant
+s'ouvre 0,9 s plus tard et vient se caler sous le timer de repos, qui reste donc lisible. C'est le
+second mouvement toléré après la barre de repos : le corps s'ouvre par transition de
+`grid-template-rows` (0fr → 1fr, 280 ms), coupée par `prefers-reduced-motion` ; les re-rendus
+(validation, suppression) restent instantanés. Les séries d'échauffement prévues par le programme
+apparaissent en tête des lignes, case « chauffe » déjà cochée, avec la discrétion des séries à
+venir ; leur repos est de 45 s.
+
 ### Repos (barre fixe en haut, lisible à 1,5 m)
 
 ```
